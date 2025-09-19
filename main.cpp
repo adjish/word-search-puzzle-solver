@@ -2,51 +2,64 @@
 #include <iostream>
 #include <vector>
 
+void checkEOF()
+{
+    if (std::cin.eof())
+    {
+        fputs("Exit.\n\n", stdout);
+        exit(EXIT_FAILURE);
+    }
+}
+
 int main(int argc, const char *argv[])
 {
     unsigned long long max_length{0};
-    std::string line;
+    size_t position;
+    std::string line{""};
     std::vector<std::string> words, crossword;
     std::vector<std::vector<bool>> highlights;
 
-    fputs("\n Enter your crossword:\n\n", stdout);
+    fputs("\n Enter your crossword:\n\n ", stdout);
 
-    do
+    while (std::getline(std::cin, line))
     {
-        putchar(' ');
-        getline(std::cin, line);
-
         if (max_length < line.length())
             max_length = line.length();
 
         crossword.push_back(line);
 
-        if (feof(stdin))
-        {
-            fputs("Exit.\n\n", stdout);
-            exit(EXIT_FAILURE);
-        }
-    } while (line.length());
+        if (line.empty())
+            break;
+
+        putchar(' ');
+    }
+
+    checkEOF();
 
     crossword.pop_back();
-    fputs(" Enter the words to search in the crossword:\n\n", stdout);
 
-    do
+    fputs(" Enter the words to search in the crossword:\n\n ", stdout);
+
+    while (std::getline(std::cin, line))
     {
-        putchar(' ');
-        getline(std::cin, line);
         words.push_back(line);
         std::reverse(line.begin(), line.end());
         words.push_back(line);
 
-        if (feof(stdin))
-        {
-            fputs("Exit.\n\n", stdout);
-            exit(EXIT_FAILURE);
-        }
-    } while (line.length());
+        if (line.empty())
+            break;
+
+        putchar(' ');
+    }
+
+    checkEOF();
 
     words.pop_back();
+
+    if (!crossword.size() || !words.size())
+    {
+        exit(EXIT_FAILURE);
+    }
 
     putchar(' ');
     highlights.resize(crossword.size());
@@ -58,12 +71,11 @@ int main(int argc, const char *argv[])
         std::fill(highlights.at(i).begin(), highlights.at(i).end(), 0);
     }
 
-    size_t position;
-
-    for (size_t i{0}; i < crossword.size(); ++i)
+    for (size_t i{crossword.size()}; i--;)
         for (auto word : words)
             if ((position = crossword.at(i).find(word)) != std::string::npos)
-                std::fill(highlights.at(i).begin() + position, highlights.at(i).begin() + position + word.length(), true);
+                std::fill(highlights.at(i).begin() + position, highlights.at(i).begin() + position + word.length(),
+                          true);
 
     for (size_t i{0}; i < max_length; ++i)
     {
