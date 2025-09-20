@@ -38,6 +38,12 @@ int main(int argc, const char *argv[])
 
     crossword.pop_back();
 
+    if (!crossword.size())
+    {
+        fputs(" Crossword empty.\n\n", stdout);
+        exit(EXIT_FAILURE);
+    }
+
     fputs(" Enter the words to search in the crossword:\n\n ", stdout);
 
     while (std::getline(std::cin, line))
@@ -55,9 +61,11 @@ int main(int argc, const char *argv[])
     checkEOF();
 
     words.pop_back();
+    words.pop_back();
 
-    if (!crossword.size() || !words.size())
+    if (!words.size())
     {
+        fputs(" Word list empty.\n\n", stdout);
         exit(EXIT_FAILURE);
     }
 
