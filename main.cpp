@@ -1,6 +1,13 @@
 #include <algorithm>
+#include <fstream>
 #include <iostream>
 #include <vector>
+
+void error(bool opening, bool firstArgument, const char *argument1, const char *argument2)
+{
+    printf("\n Unable to %s \"%s\"!\n\n", opening ? "open" : "close", firstArgument ? argument1 : argument2);
+    exit(EXIT_FAILURE);
+}
 
 void checkEOF()
 {
@@ -19,54 +26,101 @@ int main(int argc, const char *argv[])
     std::vector<std::string> words, crossword;
     std::vector<std::vector<bool>> highlights;
 
-    fputs("\n Enter your crossword:\n\n ", stdout);
-
-    while (std::getline(std::cin, line))
+    if (argc == 3)
     {
-        if (max_length < line.length())
-            max_length = line.length();
+        const char *argument1 = argv[1], *argument2 = argv[2];
+        std::ifstream file1, file2;
+        file1.open(argument1);
 
-        crossword.push_back(line);
+        if (!file1.is_open())
+            error(true, true, argument1, argument2);
 
-        if (line.empty())
-            break;
+        file2.open(argument2);
 
-        putchar(' ');
+        if (!file2.is_open())
+            error(true, false, argument1, argument2);
+
+        while (std::getline(file1, line))
+        {
+            crossword.push_back(line);
+
+            if (max_length < line.length())
+                max_length = line.length();
+        }
+
+        if (!crossword.size())
+        {
+            fputs(" Crossword empty.\n\n", stdout);
+            exit(EXIT_FAILURE);
+        }
+
+        while (std::getline(file2, line))
+        {
+            words.push_back(line);
+            std::reverse(line.begin(), line.end());
+            words.push_back(line);
+        }
+
+        if (!words.size())
+        {
+            fputs(" Word list empty.\n\n", stdout);
+            exit(EXIT_FAILURE);
+        }
+
+        file1.close();
+        file2.close();
     }
-
-    checkEOF();
-
-    crossword.pop_back();
-
-    if (!crossword.size())
+    else
     {
-        fputs(" Crossword empty.\n\n", stdout);
-        exit(EXIT_FAILURE);
-    }
+        fputs("\n Enter your crossword:\n\n ", stdout);
 
-    fputs(" Enter the words to search in the crossword:\n\n ", stdout);
+        while (std::getline(std::cin, line))
+        {
+            if (max_length < line.length())
+                max_length = line.length();
 
-    while (std::getline(std::cin, line))
-    {
-        words.push_back(line);
-        std::reverse(line.begin(), line.end());
-        words.push_back(line);
+            crossword.push_back(line);
 
-        if (line.empty())
-            break;
+            if (line.empty())
+                break;
 
-        putchar(' ');
-    }
+            putchar(' ');
+        }
 
-    checkEOF();
+        checkEOF();
 
-    words.pop_back();
-    words.pop_back();
+        crossword.pop_back();
 
-    if (!words.size())
-    {
-        fputs(" Word list empty.\n\n", stdout);
-        exit(EXIT_FAILURE);
+        if (!crossword.size())
+        {
+            fputs(" Crossword empty.\n\n", stdout);
+            exit(EXIT_FAILURE);
+        }
+
+        fputs(" Enter the words to search in the crossword:\n\n ", stdout);
+
+        while (std::getline(std::cin, line))
+        {
+            words.push_back(line);
+            std::reverse(line.begin(), line.end());
+            words.push_back(line);
+
+            if (line.empty())
+                break;
+
+            putchar(' ');
+        }
+
+        checkEOF();
+
+        words.pop_back();
+        words.pop_back();
+
+        if (!words.size())
+        {
+            fputs(" Word list empty.\n\n", stdout);
+            exit(EXIT_FAILURE);
+        }
     }
 
     putchar(' ');
