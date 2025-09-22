@@ -22,7 +22,7 @@ int main(int argc, const char *argv[])
 {
     unsigned long long max_length{0};
     size_t position;
-    std::string line{""};
+    std::string line;
     std::vector<std::string> words, crossword;
     std::vector<std::vector<bool>> highlights;
 
@@ -50,7 +50,7 @@ int main(int argc, const char *argv[])
 
         if (!crossword.size())
         {
-            fputs(" Crossword empty.\n\n", stdout);
+            fputs(" Crossword empty.\n", stdout);
             exit(EXIT_FAILURE);
         }
 
@@ -63,7 +63,7 @@ int main(int argc, const char *argv[])
 
         if (!words.size())
         {
-            fputs(" Word list empty.\n\n", stdout);
+            fputs(" Word list empty.\n", stdout);
             exit(EXIT_FAILURE);
         }
 
@@ -130,7 +130,6 @@ int main(int argc, const char *argv[])
     {
         crossword.at(i).resize(max_length);
         highlights.at(i).resize(max_length);
-        std::fill(highlights.at(i).begin(), highlights.at(i).end(), 0);
     }
 
     for (size_t i{crossword.size()}; i--;)
@@ -153,7 +152,7 @@ int main(int argc, const char *argv[])
                         highlights.at(l + m).at(i) = true;
     }
 
-    for (size_t i{0}; i < crossword.at(0).size(); ++i)
+    for (size_t i{0}; i < max_length; ++i)
     {
         line.clear();
 
@@ -170,7 +169,7 @@ int main(int argc, const char *argv[])
     {
         line.clear();
 
-        for (size_t k = i, j{0}; j < crossword.at(0).size() && k < crossword.size(); ++j, ++k)
+        for (size_t k = i, j{0}; j < max_length && k < crossword.size(); ++j, ++k)
             line += crossword.at(k).at(j);
 
         for (auto word : words)
@@ -183,7 +182,7 @@ int main(int argc, const char *argv[])
     {
         line.clear();
 
-        for (size_t j = i, k{0}; j && (k < crossword.at(0).size()); --j, ++k)
+        for (size_t j = i, k{0}; j && (k < max_length); --j, ++k)
             line += crossword.at(j - 1).at(k);
 
         for (auto word : words)
@@ -192,11 +191,11 @@ int main(int argc, const char *argv[])
                     highlights.at(i - position - j - 1).at(position + j) = true;
     }
 
-    for (size_t i{1}; i <= crossword.at(0).size(); ++i)
+    for (size_t i{1}; i <= max_length; ++i)
     {
         line.clear();
 
-        for (size_t j = i, k{crossword.size() - 1}; k && (j < crossword.at(0).size()); --k, ++j)
+        for (size_t j = i, k{crossword.size() - 1}; k && (j < max_length); --k, ++j)
             line += crossword.at(k).at(j - 1);
 
         for (auto word : words)
