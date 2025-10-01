@@ -5,7 +5,8 @@
 
 inline void error(bool opening, bool firstArgument, const char *argument1, const char *argument2)
 {
-    printf("\n Unable to %s \"%s\"!\n\n", opening ? "open" : "close", firstArgument ? argument1 : argument2);
+    std::cerr << "\n Unable to " << (opening ? "open" : "close") << " \"" << (firstArgument ? argument1 : argument2)
+              << "\"!\n\n";
     exit(EXIT_FAILURE);
 }
 
@@ -13,7 +14,7 @@ inline void checkEOF()
 {
     if (std::cin.eof())
     {
-        fputs("Exit.\n\n", stdout);
+        std::cerr << "Exit.\n\n";
         exit(EXIT_FAILURE);
     }
 }
@@ -54,7 +55,7 @@ int main(int argc, const char *argv[])
 
         if (!height)
         {
-            fputs(" Crossword empty.\n", stdout);
+            std::cerr << " Crossword empty.\n";
             exit(EXIT_FAILURE);
         }
 
@@ -67,7 +68,7 @@ int main(int argc, const char *argv[])
 
         if (!words.size())
         {
-            fputs(" Word list empty.\n", stdout);
+            std::cerr << " Word list empty.\n";
             exit(EXIT_FAILURE);
         }
 
@@ -76,7 +77,7 @@ int main(int argc, const char *argv[])
     }
     else
     {
-        fputs("\n Enter your crossword:\n\n ", stdout);
+        std::cout << "\n Enter your crossword:\n\n ";
 
         while (std::getline(std::cin, line))
         {
@@ -88,7 +89,7 @@ int main(int argc, const char *argv[])
             if (line.empty())
                 break;
 
-            putchar(' ');
+            std::cout << ' ';
         }
 
         checkEOF();
@@ -99,11 +100,11 @@ int main(int argc, const char *argv[])
 
         if (!height)
         {
-            fputs(" Crossword empty.\n\n", stdout);
+            std::cerr << " Crossword empty.\n";
             exit(EXIT_FAILURE);
         }
 
-        fputs(" Enter the words to search in the crossword:\n\n ", stdout);
+        std::cout << " Enter the words to search in the crossword:\n\n ";
 
         while (std::getline(std::cin, line))
         {
@@ -114,7 +115,7 @@ int main(int argc, const char *argv[])
             if (line.empty())
                 break;
 
-            putchar(' ');
+            std::cout << ' ';
         }
 
         checkEOF();
@@ -124,12 +125,12 @@ int main(int argc, const char *argv[])
 
         if (!words.size())
         {
-            fputs(" Word list empty.\n\n", stdout);
+            std::cerr << " Word list empty.\n";
             exit(EXIT_FAILURE);
         }
     }
 
-    putchar(' ');
+    std::cout << ' ';
     highlights.resize(height);
 
     for (size_t i{height}; i--;)
@@ -215,8 +216,8 @@ int main(int argc, const char *argv[])
         for (size_t j{0}; j < crossword.at(i).size(); ++j)
             std::cout << "\33[" << highlights.at(i).at(j) * 31 << "m" << crossword.at(i).at(j) << " ";
 
-        fputs("\n ", stdout);
+        std::cout << "\n ";
     }
 
-    putchar('\n');
+    std::cout << '\n';
 }
