@@ -56,7 +56,7 @@ int main(int argc, const char *argv[])
         if (!height)
         {
             std::cerr << " Crossword empty.\n";
-            exit(EXIT_FAILURE);
+            return EXIT_FAILURE;
         }
 
         while (std::getline(file2, line))
@@ -69,7 +69,7 @@ int main(int argc, const char *argv[])
         if (!words.size())
         {
             std::cerr << " Word list empty.\n";
-            exit(EXIT_FAILURE);
+            return EXIT_FAILURE;
         }
 
         file1.close();
@@ -101,7 +101,7 @@ int main(int argc, const char *argv[])
         if (!height)
         {
             std::cerr << " Crossword empty.\n";
-            exit(EXIT_FAILURE);
+            return EXIT_FAILURE;
         }
 
         std::cout << " Enter the words to search in the crossword:\n\n ";
@@ -126,7 +126,7 @@ int main(int argc, const char *argv[])
         if (!words.size())
         {
             std::cerr << " Word list empty.\n";
-            exit(EXIT_FAILURE);
+            return EXIT_FAILURE;
         }
     }
 
