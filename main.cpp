@@ -34,18 +34,18 @@ int main(int argc, const char *argv[])
     if (argc == 3)
     {
         const char *argument1 = argv[1], *argument2 = argv[2];
-        std::ifstream file1, file2;
-        file1.open(argument1);
+        std::ifstream crosswordFile, wordsFile;
+        crosswordFile.open(argument1);
 
-        if (!file1.is_open())
+        if (!crosswordFile.is_open())
             error(true, true, argument1, argument2);
 
-        file2.open(argument2);
+        wordsFile.open(argument2);
 
-        if (!file2.is_open())
+        if (!wordsFile.is_open())
             error(true, false, argument1, argument2);
 
-        while (std::getline(file1, line))
+        while (std::getline(crosswordFile, line))
         {
             crossword.push_back(line);
 
@@ -61,7 +61,7 @@ int main(int argc, const char *argv[])
             return EXIT_FAILURE;
         }
 
-        while (std::getline(file2, line))
+        while (std::getline(wordsFile, line))
         {
             words.insert(line);
             std::reverse(line.begin(), line.end());
@@ -74,8 +74,8 @@ int main(int argc, const char *argv[])
             return EXIT_FAILURE;
         }
 
-        file1.close();
-        file2.close();
+        crosswordFile.close();
+        wordsFile.close();
     }
     else
     {
@@ -142,9 +142,13 @@ int main(int argc, const char *argv[])
 
     for (size_t i{height}; i--;)
         for (auto &word : words)
-            if ((position = crossword.at(i).find(word)) != std::string::npos)
+        {
+            position = crossword.at(i).find(word);
+
+            if (position != std::string::npos)
                 std::fill(highlights.at(i).begin() + static_cast<Diff>(position),
                           highlights.at(i).begin() + static_cast<Diff>(position + word.length()), true);
+        }
 
     for (size_t i{0}; i < maxLength; ++i)
     {
@@ -168,9 +172,13 @@ int main(int argc, const char *argv[])
             line += crossword.at(k).at(j);
 
         for (auto &word : words)
-            if ((position = line.find(word)) != std::string::npos)
+        {
+            position = line.find(word);
+
+            if (position != std::string::npos)
                 for (size_t j{0}; j < word.length(); ++j)
                     highlights.at(position + j).at(position + j + i) = true;
+        }
     }
 
     for (size_t i{1}; i < height; ++i)
@@ -181,9 +189,13 @@ int main(int argc, const char *argv[])
             line += crossword.at(k).at(j);
 
         for (auto &word : words)
-            if ((position = line.find(word)) != std::string::npos)
+        {
+            position = line.find(word);
+
+            if (position != std::string::npos)
                 for (size_t j{0}; j < word.length(); ++j)
                     highlights.at(i + position + j).at(position + j) = true;
+        }
     }
 
     for (size_t i{1}; i <= height; ++i)
@@ -194,9 +206,13 @@ int main(int argc, const char *argv[])
             line += crossword.at(j - 1).at(k);
 
         for (auto &word : words)
-            if ((position = line.find(word)) != std::string::npos)
+        {
+            position = line.find(word);
+
+            if (position != std::string::npos)
                 for (size_t j{0}; j < word.length(); ++j)
                     highlights.at(i - position - j - 1).at(position + j) = true;
+        }
     }
 
     for (size_t i{1}; i <= maxLength; ++i)
@@ -207,9 +223,13 @@ int main(int argc, const char *argv[])
             line += crossword.at(k).at(j);
 
         for (auto &word : words)
-            if ((position = line.find(word)) != std::string::npos)
+        {
+            position = line.find(word);
+
+            if (position != std::string::npos)
                 for (size_t j{0}; j < word.length(); ++j)
                     highlights.at(height - 1 - position - j).at(position + j + i) = true;
+        }
     }
 
     for (size_t i{0}; i < height; ++i)
