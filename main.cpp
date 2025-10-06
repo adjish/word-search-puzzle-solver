@@ -29,7 +29,6 @@ int main(int argc, const char *argv[])
     std::string line;
     std::unordered_set<std::string> words;
     std::vector<std::string> crossword;
-    std::vector<std::vector<bool>> highlights;
 
     if (argc == 3)
     {
@@ -132,12 +131,12 @@ int main(int argc, const char *argv[])
     }
 
     std::cout << ' ';
-    highlights.resize(height);
+
+    std::vector<std::vector<bool>> highlights(height, std::vector<bool>(maxLength, 0));
 
     for (size_t i{height}; i--;)
     {
         crossword.at(i).resize(maxLength);
-        highlights.at(i).resize(maxLength);
     }
 
     for (size_t i{height}; i--;)
