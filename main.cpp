@@ -22,10 +22,7 @@ inline void checkEOF()
 
 int main(int argc, const char *argv[])
 {
-    using Diff = std::vector<int>::difference_type;
-
     unsigned long long maxLength{1}, height;
-    size_t position;
     std::string line;
     std::unordered_set<std::string> words;
     std::vector<std::string> crossword;
@@ -67,7 +64,7 @@ int main(int argc, const char *argv[])
             words.insert(line);
         }
 
-        if (!words.size())
+        if (words.empty())
         {
             std::cerr << " Word list empty.\n";
             return EXIT_FAILURE;
@@ -123,7 +120,7 @@ int main(int argc, const char *argv[])
 
         words.erase("");
 
-        if (!words.size())
+        if (words.empty())
         {
             std::cerr << " Word list empty.\n";
             return EXIT_FAILURE;
@@ -140,14 +137,15 @@ int main(int argc, const char *argv[])
     }
 
     for (size_t i{height}; i--;)
-        for (auto &word : words)
-        {
-            position = crossword.at(i).find(word);
+    {
+        line = crossword.at(i);
 
-            if (position != std::string::npos)
-                std::fill(highlights.at(i).begin() + static_cast<Diff>(position),
-                          highlights.at(i).begin() + static_cast<Diff>(position + word.length()), true);
-        }
+        for (auto &word : words)
+            for (size_t l{0}; l + word.length() <= maxLength; ++l)
+                if (line.substr(l, word.length()) == word)
+                    for (size_t m{0}; m < word.size(); ++m)
+                        highlights.at(i).at(l + m) = true;
+    }
 
     for (size_t i{0}; i < maxLength; ++i)
     {
@@ -157,7 +155,7 @@ int main(int argc, const char *argv[])
             line.push_back(crossword.at(j).at(i));
 
         for (auto &word : words)
-            for (size_t l{0}; (l + word.length() <= line.size()) && !word.empty(); ++l)
+            for (size_t l{0}; l + word.length() <= height; ++l)
                 if (line.substr(l, word.length()) == word)
                     for (size_t m{0}; m < word.size(); ++m)
                         highlights.at(l + m).at(i) = true;
@@ -171,13 +169,10 @@ int main(int argc, const char *argv[])
             line += crossword.at(k).at(j);
 
         for (auto &word : words)
-        {
-            position = line.find(word);
-
-            if (position != std::string::npos)
-                for (size_t j{0}; j < word.length(); ++j)
-                    highlights.at(position + j).at(position + j + i) = true;
-        }
+            for (size_t l{0}; l + word.length() <= line.length(); ++l)
+                if (line.substr(l, word.length()) == word)
+                    for (size_t j{0}; j < word.length(); ++j)
+                        highlights.at(l + j).at(l + j + i) = true;
     }
 
     for (size_t i{1}; i < height; ++i)
@@ -188,13 +183,10 @@ int main(int argc, const char *argv[])
             line += crossword.at(k).at(j);
 
         for (auto &word : words)
-        {
-            position = line.find(word);
-
-            if (position != std::string::npos)
-                for (size_t j{0}; j < word.length(); ++j)
-                    highlights.at(i + position + j).at(position + j) = true;
-        }
+            for (size_t l{0}; l + word.length() <= line.length(); ++l)
+                if (line.substr(l, word.length()) == word)
+                    for (size_t j{0}; j < word.length(); ++j)
+                        highlights.at(i + l + j).at(l + j) = true;
     }
 
     for (size_t i{1}; i <= height; ++i)
@@ -205,13 +197,10 @@ int main(int argc, const char *argv[])
             line += crossword.at(j - 1).at(k);
 
         for (auto &word : words)
-        {
-            position = line.find(word);
-
-            if (position != std::string::npos)
-                for (size_t j{0}; j < word.length(); ++j)
-                    highlights.at(i - position - j - 1).at(position + j) = true;
-        }
+            for (size_t l{0}; l + word.length() <= line.length(); ++l)
+                if (line.substr(l, word.length()) == word)
+                    for (size_t j{0}; j < word.length(); ++j)
+                        highlights.at(i - l - j - 1).at(l + j) = true;
     }
 
     for (size_t i{1}; i <= maxLength; ++i)
@@ -222,13 +211,10 @@ int main(int argc, const char *argv[])
             line += crossword.at(k).at(j);
 
         for (auto &word : words)
-        {
-            position = line.find(word);
-
-            if (position != std::string::npos)
-                for (size_t j{0}; j < word.length(); ++j)
-                    highlights.at(height - 1 - position - j).at(position + j + i) = true;
-        }
+            for (size_t l{0}; l + word.length() <= line.length(); ++l)
+                if (line.substr(l, word.length()) == word)
+                    for (size_t j{0}; j < word.length(); ++j)
+                        highlights.at(height - 1 - l - j).at(l + j + i) = true;
     }
 
     for (size_t i{0}; i < height; ++i)
