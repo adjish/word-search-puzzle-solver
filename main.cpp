@@ -127,8 +127,6 @@ int main(int argc, const char *argv[])
         }
     }
 
-    std::cout << ' ';
-
     std::vector<std::vector<bool>> highlights(height, std::vector<bool>(maxLength, 0));
 
     for (size_t i{height}; i--;)
@@ -219,11 +217,16 @@ int main(int argc, const char *argv[])
 
     for (size_t i{0}; i < height; ++i)
     {
+        std::cout << ' ';
+
         for (size_t j{0}; j < crossword.at(i).size(); ++j)
             std::cout << "\33[" << highlights.at(i).at(j) * 31 << "m" << crossword.at(i).at(j) << " ";
 
-        std::cout << "\n ";
+        std::cout << '\n';
     }
 
-    std::cout << '\n';
+    if (argc != 3)
+    {
+        std::cout << '\n';
+    }
 }
