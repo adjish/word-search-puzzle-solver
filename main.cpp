@@ -4,10 +4,9 @@
 #include <unordered_set>
 #include <vector>
 
-inline void error(bool opening, bool firstArgument, const char *argument1, const char *argument2)
+inline void error(const char *argument)
 {
-    std::cerr << "\n Unable to " << (opening ? "open" : "close") << " \"" << (firstArgument ? argument1 : argument2)
-              << "\"!\n\n";
+    std::cerr << "\n Unable to open \"" << argument << "\"!\n\n";
     exit(EXIT_FAILURE);
 }
 
@@ -34,12 +33,12 @@ int main(int argc, const char *argv[])
         crosswordFile.open(argument1);
 
         if (!crosswordFile.is_open())
-            error(true, true, argument1, argument2);
+            error(argument1);
 
         wordsFile.open(argument2);
 
         if (!wordsFile.is_open())
-            error(true, false, argument1, argument2);
+            error(argument2);
 
         while (std::getline(crosswordFile, line))
         {
