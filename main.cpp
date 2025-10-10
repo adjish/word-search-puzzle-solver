@@ -21,24 +21,24 @@ inline void checkEOF()
 
 int main(int argc, const char *argv[])
 {
-    unsigned long long maxLength{1}, height;
+    size_t maxLength{1}, height;
     std::string line;
     std::unordered_set<std::string> words;
     std::vector<std::string> crossword;
 
     if (argc == 3)
     {
-        const char *argument1 = argv[1], *argument2 = argv[2];
+        const char *crosswordPath = argv[1], *wordsPath = argv[2];
         std::ifstream crosswordFile, wordsFile;
-        crosswordFile.open(argument1);
+        crosswordFile.open(crosswordPath);
 
         if (!crosswordFile.is_open())
-            error(argument1);
+            error(crosswordPath);
 
-        wordsFile.open(argument2);
+        wordsFile.open(wordsPath);
 
         if (!wordsFile.is_open())
-            error(argument2);
+            error(wordsPath);
 
         while (std::getline(crosswordFile, line))
         {
@@ -76,22 +76,17 @@ int main(int argc, const char *argv[])
     {
         std::cout << "\n Enter your crossword:\n\n ";
 
-        while (std::getline(std::cin, line))
+        while (std::getline(std::cin, line) && line.length())
         {
             if (maxLength < line.length())
                 maxLength = line.length();
 
             crossword.push_back(line);
 
-            if (line.empty())
-                break;
-
             std::cout << ' ';
         }
 
         checkEOF();
-
-        crossword.pop_back();
 
         height = crossword.size();
 
@@ -103,21 +98,16 @@ int main(int argc, const char *argv[])
 
         std::cout << " Enter the words to search in the crossword:\n\n ";
 
-        while (std::getline(std::cin, line))
+        while (std::getline(std::cin, line) && line.length())
         {
             words.insert(line);
             std::reverse(line.begin(), line.end());
             words.insert(line);
 
-            if (line.empty())
-                break;
-
             std::cout << ' ';
         }
 
         checkEOF();
-
-        words.erase("");
 
         if (words.empty())
         {
@@ -140,7 +130,7 @@ int main(int argc, const char *argv[])
         for (auto &word : words)
             for (size_t l{0}; l + word.length() <= maxLength; ++l)
                 if (line.substr(l, word.length()) == word)
-                    for (size_t m{0}; m < word.size(); ++m)
+                    for (size_t m{0}; m < word.length(); ++m)
                         highlights.at(i).at(l + m) = true;
     }
 
@@ -154,7 +144,7 @@ int main(int argc, const char *argv[])
         for (auto &word : words)
             for (size_t l{0}; l + word.length() <= height; ++l)
                 if (line.substr(l, word.length()) == word)
-                    for (size_t m{0}; m < word.size(); ++m)
+                    for (size_t m{0}; m < word.length(); ++m)
                         highlights.at(l + m).at(i) = true;
     }
 
