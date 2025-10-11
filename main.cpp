@@ -59,8 +59,7 @@ int main(int argc, const char *argv[])
         while (std::getline(wordsFile, line))
         {
             words.insert(line);
-            std::reverse(line.begin(), line.end());
-            words.insert(line);
+            words.insert(std::string(line.rbegin(), line.rend()));
         }
 
         if (words.empty())
@@ -101,8 +100,7 @@ int main(int argc, const char *argv[])
         while (std::getline(std::cin, line) && line.length())
         {
             words.insert(line);
-            std::reverse(line.begin(), line.end());
-            words.insert(line);
+            words.insert(std::string(line.rbegin(), line.rend()));
 
             std::cout << ' ';
         }
@@ -129,7 +127,7 @@ int main(int argc, const char *argv[])
 
         for (auto &word : words)
             for (size_t l{0}; l + word.length() <= maxLength; ++l)
-                if (line.substr(l, word.length()) == word)
+                if (std::string_view(line).substr(l, word.length()) == word)
                     for (size_t m{0}; m < word.length(); ++m)
                         highlights.at(i).at(l + m) = true;
     }
@@ -143,7 +141,7 @@ int main(int argc, const char *argv[])
 
         for (auto &word : words)
             for (size_t l{0}; l + word.length() <= height; ++l)
-                if (line.substr(l, word.length()) == word)
+                if (std::string_view(line).substr(l, word.length()) == word)
                     for (size_t m{0}; m < word.length(); ++m)
                         highlights.at(l + m).at(i) = true;
     }
@@ -157,7 +155,7 @@ int main(int argc, const char *argv[])
 
         for (auto &word : words)
             for (size_t l{0}; l + word.length() <= line.length(); ++l)
-                if (line.substr(l, word.length()) == word)
+                if (std::string_view(line).substr(l, word.length()) == word)
                     for (size_t j{0}; j < word.length(); ++j)
                         highlights.at(l + j).at(l + j + i) = true;
     }
@@ -171,7 +169,7 @@ int main(int argc, const char *argv[])
 
         for (auto &word : words)
             for (size_t l{0}; l + word.length() <= line.length(); ++l)
-                if (line.substr(l, word.length()) == word)
+                if (std::string_view(line).substr(l, word.length()) == word)
                     for (size_t j{0}; j < word.length(); ++j)
                         highlights.at(i + l + j).at(l + j) = true;
     }
@@ -185,7 +183,7 @@ int main(int argc, const char *argv[])
 
         for (auto &word : words)
             for (size_t l{0}; l + word.length() <= line.length(); ++l)
-                if (line.substr(l, word.length()) == word)
+                if (std::string_view(line).substr(l, word.length()) == word)
                     for (size_t j{0}; j < word.length(); ++j)
                         highlights.at(i - l - j - 1).at(l + j) = true;
     }
@@ -199,7 +197,7 @@ int main(int argc, const char *argv[])
 
         for (auto &word : words)
             for (size_t l{0}; l + word.length() <= line.length(); ++l)
-                if (line.substr(l, word.length()) == word)
+                if (std::string_view(line).substr(l, word.length()) == word)
                     for (size_t j{0}; j < word.length(); ++j)
                         highlights.at(height - 1 - l - j).at(l + j + i) = true;
     }
