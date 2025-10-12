@@ -216,4 +216,6 @@ int main(int argc, const char *argv[])
     {
         std::cout << '\n';
     }
+
+    std::cout << "\33[0m";
 }
