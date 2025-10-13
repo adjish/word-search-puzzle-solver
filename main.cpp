@@ -6,7 +6,7 @@
 
 inline void error(const char *argument)
 {
-    std::cerr << "\n Unable to open \"" << argument << "\"!\n\n";
+    std::cerr << " Unable to open \"" << argument << "\"!\n";
     exit(EXIT_FAILURE);
 }
 
