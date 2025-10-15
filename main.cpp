@@ -4,21 +4,6 @@
 #include <unordered_set>
 #include <vector>
 
-inline void error(const char *argument)
-{
-    std::cerr << " Unable to open \"" << argument << "\"!\n";
-    exit(EXIT_FAILURE);
-}
-
-inline void checkEOF()
-{
-    if (std::cin.eof())
-    {
-        std::cerr << "Exit.\n\n";
-        exit(EXIT_FAILURE);
-    }
-}
-
 int main(int argc, const char *argv[])
 {
     size_t maxLength{1}, height;
@@ -33,12 +18,18 @@ int main(int argc, const char *argv[])
         crosswordFile.open(crosswordPath);
 
         if (!crosswordFile.is_open())
-            error(crosswordPath);
+        {
+            std::cerr << " Unable to open \"" << crosswordPath << "\"!\n";
+            exit(EXIT_FAILURE);
+        }
 
         wordsFile.open(wordsPath);
 
         if (!wordsFile.is_open())
-            error(wordsPath);
+        {
+            std::cerr << " Unable to open \"" << wordsPath << "\"!\n";
+            exit(EXIT_FAILURE);
+        }
 
         while (std::getline(crosswordFile, line))
         {
@@ -85,7 +76,11 @@ int main(int argc, const char *argv[])
             std::cout << ' ';
         }
 
-        checkEOF();
+        if (std::cin.eof())
+        {
+            std::cerr << "Exit.\n\n";
+            exit(EXIT_FAILURE);
+        }
 
         height = crossword.size();
 
@@ -105,7 +100,11 @@ int main(int argc, const char *argv[])
             std::cout << ' ';
         }
 
-        checkEOF();
+        if (std::cin.eof())
+        {
+            std::cerr << "Exit.\n\n";
+            exit(EXIT_FAILURE);
+        }
 
         if (words.empty())
         {
