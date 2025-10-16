@@ -8,7 +8,7 @@ int main(int argc, const char *argv[])
 {
     size_t maxLength{1}, height;
     std::string line;
-    std::unordered_set<std::string> words;
+    std::unordered_set<std::string> words_input;
     std::vector<std::string> crossword;
 
     if (argc == 3)
@@ -49,11 +49,11 @@ int main(int argc, const char *argv[])
 
         while (std::getline(wordsFile, line))
         {
-            words.insert(line);
-            words.insert(std::string(line.rbegin(), line.rend()));
+            words_input.insert(line);
+            words_input.insert(std::string(line.rbegin(), line.rend()));
         }
 
-        if (words.empty())
+        if (words_input.empty())
         {
             std::cerr << " Word list empty.\n";
             return EXIT_FAILURE;
@@ -94,8 +94,8 @@ int main(int argc, const char *argv[])
 
         while (std::getline(std::cin, line) && line.length())
         {
-            words.insert(line);
-            words.insert(std::string(line.rbegin(), line.rend()));
+            words_input.insert(line);
+            words_input.insert(std::string(line.rbegin(), line.rend()));
 
             std::cout << ' ';
         }
@@ -106,7 +106,7 @@ int main(int argc, const char *argv[])
             exit(EXIT_FAILURE);
         }
 
-        if (words.empty())
+        if (words_input.empty())
         {
             std::cerr << " Word list empty.\n";
             return EXIT_FAILURE;
@@ -114,6 +114,11 @@ int main(int argc, const char *argv[])
     }
 
     std::vector<std::vector<bool>> highlights(height, std::vector<bool>(maxLength, 0));
+    std::vector<std::string_view> words;
+
+    words.reserve(words_input.size());
+
+    std::copy(words_input.begin(), words_input.end(), std::back_inserter(words));
 
     for (auto &string : crossword)
     {
