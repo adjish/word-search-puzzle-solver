@@ -17,7 +17,7 @@ int main(int argc, const char *argv[])
         std::ifstream crosswordFile, wordsFile;
         crosswordFile.open(crosswordPath);
 
-        if (!crosswordFile.is_open())
+        if (!crosswordFile)
         {
             std::cerr << " Unable to open \"" << crosswordPath << "\"!\n";
             exit(EXIT_FAILURE);
@@ -25,7 +25,7 @@ int main(int argc, const char *argv[])
 
         wordsFile.open(wordsPath);
 
-        if (!wordsFile.is_open())
+        if (!wordsFile)
         {
             std::cerr << " Unable to open \"" << wordsPath << "\"!\n";
             exit(EXIT_FAILURE);
