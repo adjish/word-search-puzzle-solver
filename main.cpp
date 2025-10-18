@@ -14,16 +14,13 @@ int main(int argc, const char *argv[])
     if (argc == 3)
     {
         const char *crosswordPath = argv[1], *wordsPath = argv[2];
-        std::ifstream crosswordFile, wordsFile;
-        crosswordFile.open(crosswordPath);
+        std::ifstream crosswordFile(crosswordPath), wordsFile(wordsPath);
 
         if (!crosswordFile)
         {
             std::cerr << " Unable to open \"" << crosswordPath << "\"!\n";
             exit(EXIT_FAILURE);
         }
-
-        wordsFile.open(wordsPath);
 
         if (!wordsFile)
         {
