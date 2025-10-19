@@ -11,6 +11,9 @@ int main(int argc, const char *argv[])
     std::unordered_set<std::string> words_input;
     std::vector<std::string> crossword;
 
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
     if (argc == 3)
     {
         const char *crosswordPath = argv[1], *wordsPath = argv[2];
