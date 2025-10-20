@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <unordered_set>
@@ -7,18 +8,37 @@
 int main(int argc, const char *argv[])
 {
     size_t maxLength{1}, height;
+    bool inputFromFiles = false, ignoreCase = false;
+    const char *crosswordPath, *wordsPath;
     std::string line;
     std::unordered_set<std::string> words_input;
     std::vector<std::string> crossword;
+    std::ifstream crosswordFile, wordsFile;
 
     std::ios_base::sync_with_stdio(false);
-    std::cin.tie(nullptr);
 
     if (argc == 3)
     {
-        const char *crosswordPath = argv[1], *wordsPath = argv[2];
-        std::ifstream crosswordFile(crosswordPath), wordsFile(wordsPath);
+        inputFromFiles = true;
+        crosswordPath = argv[1], wordsPath = argv[2];
+        crosswordFile.open(crosswordPath);
+        wordsFile.open(wordsPath);
+    }
+    else
+    {
+        for (short i = 1; i < argc; ++i)
+        {
+            const char *option = argv[i];
 
+            if (!strcmp(option, "-i"))
+            {
+                ignoreCase = true;
+            }
+        }
+    }
+
+    if (inputFromFiles)
+    {
         if (!crosswordFile)
         {
             std::cerr << " Unable to open \"" << crosswordPath << "\"!\n";
@@ -33,6 +53,11 @@ int main(int argc, const char *argv[])
 
         while (std::getline(crosswordFile, line))
         {
+            if (ignoreCase)
+            {
+                std::transform(line.begin(), line.end(), line.begin(), [](unsigned char c) { return std::tolower(c); });
+            }
+
             crossword.push_back(line);
 
             if (maxLength < line.length())
@@ -49,6 +74,11 @@ int main(int argc, const char *argv[])
 
         while (std::getline(wordsFile, line))
         {
+            if (ignoreCase)
+            {
+                std::transform(line.begin(), line.end(), line.begin(), [](unsigned char c) { return std::tolower(c); });
+            }
+
             words_input.insert(line);
             words_input.insert(std::string(line.rbegin(), line.rend()));
         }
@@ -70,6 +100,11 @@ int main(int argc, const char *argv[])
         {
             if (maxLength < line.length())
                 maxLength = line.length();
+
+            if (ignoreCase)
+            {
+                std::transform(line.begin(), line.end(), line.begin(), [](unsigned char c) { return std::tolower(c); });
+            }
 
             crossword.push_back(line);
 
@@ -94,6 +129,11 @@ int main(int argc, const char *argv[])
 
         while (std::getline(std::cin, line) && line.length())
         {
+            if (ignoreCase)
+            {
+                std::transform(line.begin(), line.end(), line.begin(), [](unsigned char c) { return std::tolower(c); });
+            }
+
             words_input.insert(line);
             words_input.insert(std::string(line.rbegin(), line.rend()));
 
@@ -216,7 +256,7 @@ int main(int argc, const char *argv[])
         std::cout << '\n';
     }
 
-    if (argc != 3)
+    if (!inputFromFiles)
     {
         std::cout << '\n';
     }
