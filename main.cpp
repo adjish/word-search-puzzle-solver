@@ -8,25 +8,23 @@
 int main(int argc, const char *argv[])
 {
     size_t maxLength{1}, height;
-    bool inputFromFiles = false, ignoreCase = false;
-    const char *crosswordPath, *wordsPath;
+    bool inputFromFiles, ignoreCase = false;
+    const char *crosswordPath = nullptr, *wordsPath = nullptr;
     std::string line;
     std::unordered_set<std::string> words_input;
-    std::vector<std::string> crossword;
+    std::vector<std::string> *crossword;
+    std::vector<std::string> inputCrossword, crosswordLowered;
     std::ifstream crosswordFile, wordsFile;
 
     std::ios_base::sync_with_stdio(false);
 
     if (argc == 3)
     {
-        inputFromFiles = true;
         crosswordPath = argv[1], wordsPath = argv[2];
-        crosswordFile.open(crosswordPath);
-        wordsFile.open(wordsPath);
     }
     else
     {
-        for (short i = 1; i < argc; ++i)
+        for (int i = 1; i < argc; ++i)
         {
             const char *option = argv[i];
 
@@ -34,11 +32,46 @@ int main(int argc, const char *argv[])
             {
                 ignoreCase = true;
             }
+
+            if (!strcmp(option, "--crossword-file"))
+            {
+                if (i + 1 < argc)
+                {
+                    ++i;
+                    crosswordPath = argv[i];
+                    continue;
+                }
+                else
+                {
+                    std::cerr << "No crossword file specified!\n";
+                    exit(EXIT_FAILURE);
+                }
+            }
+
+            if (!strcmp(option, "--words-file"))
+            {
+                if (i + 1 < argc)
+                {
+                    ++i;
+                    wordsPath = argv[i];
+                    continue;
+                }
+                else
+                {
+                    std::cerr << "No words file specified!\n";
+                    exit(EXIT_FAILURE);
+                }
+            }
         }
     }
 
+    inputFromFiles = crosswordPath != nullptr && wordsPath != nullptr;
+
     if (inputFromFiles)
     {
+        crosswordFile.open(crosswordPath);
+        wordsFile.open(wordsPath);
+
         if (!crosswordFile)
         {
             std::cerr << " Unable to open \"" << crosswordPath << "\"!\n";
@@ -53,18 +86,13 @@ int main(int argc, const char *argv[])
 
         while (std::getline(crosswordFile, line))
         {
-            if (ignoreCase)
-            {
-                std::transform(line.begin(), line.end(), line.begin(), [](unsigned char c) { return std::tolower(c); });
-            }
-
-            crossword.push_back(line);
+            inputCrossword.push_back(line);
 
             if (maxLength < line.length())
                 maxLength = line.length();
         }
 
-        height = crossword.size();
+        height = inputCrossword.size();
 
         if (!height)
         {
@@ -101,12 +129,7 @@ int main(int argc, const char *argv[])
             if (maxLength < line.length())
                 maxLength = line.length();
 
-            if (ignoreCase)
-            {
-                std::transform(line.begin(), line.end(), line.begin(), [](unsigned char c) { return std::tolower(c); });
-            }
-
-            crossword.push_back(line);
+            inputCrossword.push_back(line);
 
             std::cout << ' ';
         }
@@ -117,7 +140,7 @@ int main(int argc, const char *argv[])
             exit(EXIT_FAILURE);
         }
 
-        height = crossword.size();
+        height = inputCrossword.size();
 
         if (!height)
         {
@@ -160,14 +183,30 @@ int main(int argc, const char *argv[])
 
     std::copy(words_input.begin(), words_input.end(), std::back_inserter(words));
 
-    for (auto &string : crossword)
+    if (ignoreCase)
+    {
+        for (auto string : inputCrossword)
+        {
+            std::transform(string.begin(), string.end(), string.begin(),
+                           [](unsigned char c) { return std::tolower(c); });
+            crosswordLowered.push_back(string);
+        }
+
+        crossword = &crosswordLowered;
+    }
+    else
+    {
+        crossword = &inputCrossword;
+    }
+
+    for (auto &string : (*crossword))
     {
         string.resize(maxLength);
     }
 
     for (size_t i{height}; i--;)
     {
-        line = crossword.at(i);
+        line = ((*crossword)).at(i);
 
         for (const auto &word : words)
             for (size_t l{0}; l + word.length() <= maxLength; ++l)
@@ -181,7 +220,7 @@ int main(int argc, const char *argv[])
         line.clear();
 
         for (size_t j{0}; j < height; ++j)
-            line.push_back(crossword.at(j).at(i));
+            line.push_back((*crossword).at(j).at(i));
 
         for (const auto &word : words)
             for (size_t l{0}; l + word.length() <= height; ++l)
@@ -194,8 +233,8 @@ int main(int argc, const char *argv[])
     {
         line.clear();
 
-        for (size_t j = i, k{0}; j < maxLength && k < height && crossword.at(k).at(j); ++j, ++k)
-            line += crossword.at(k).at(j);
+        for (size_t j = i, k{0}; j < maxLength && k < height && (*crossword).at(k).at(j); ++j, ++k)
+            line += (*crossword).at(k).at(j);
 
         for (const auto &word : words)
             for (size_t l{0}; l + word.length() <= line.length(); ++l)
@@ -209,7 +248,7 @@ int main(int argc, const char *argv[])
         line.clear();
 
         for (size_t k = i, j{0}; j < maxLength && k < height; ++j, ++k)
-            line += crossword.at(k).at(j);
+            line += (*crossword).at(k).at(j);
 
         for (const auto &word : words)
             for (size_t l{0}; l + word.length() <= line.length(); ++l)
@@ -223,7 +262,7 @@ int main(int argc, const char *argv[])
         line.clear();
 
         for (size_t j = i, k{0}; j && (k < maxLength); --j, ++k)
-            line += crossword.at(j - 1).at(k);
+            line += (*crossword).at(j - 1).at(k);
 
         for (const auto &word : words)
             for (size_t l{0}; l + word.length() <= line.length(); ++l)
@@ -237,7 +276,7 @@ int main(int argc, const char *argv[])
         line.clear();
 
         for (size_t j = i, k{height - 1}; k && (j < maxLength); --k, ++j)
-            line += crossword.at(k).at(j);
+            line += (*crossword).at(k).at(j);
 
         for (const auto &word : words)
             for (size_t l{0}; l + word.length() <= line.length(); ++l)
@@ -250,8 +289,8 @@ int main(int argc, const char *argv[])
     {
         std::cout << ' ';
 
-        for (size_t j{0}; j < crossword.at(i).size(); ++j)
-            std::cout << "\33[" << highlights.at(i).at(j) * 31 << "m" << crossword.at(i).at(j) << " ";
+        for (size_t j{0}; j < inputCrossword.at(i).size(); ++j)
+            std::cout << "\33[" << highlights.at(i).at(j) * 31 << "m" << inputCrossword.at(i).at(j) << " ";
 
         std::cout << '\n';
     }
