@@ -5,6 +5,8 @@
 #include <unordered_set>
 #include <vector>
 
+#define HIGHLIGHT_COLOR_CODE 31
+
 int main(int argc, const char *argv[])
 {
     size_t maxLength{1}, height;
@@ -41,11 +43,9 @@ int main(int argc, const char *argv[])
                     crosswordPath = argv[i];
                     continue;
                 }
-                else
-                {
-                    std::cerr << "No crossword file specified!\n";
-                    exit(EXIT_FAILURE);
-                }
+
+                std::cerr << "No crossword file specified!\n";
+                return EXIT_FAILURE;
             }
 
             if (!strcmp(option, "--words-file"))
@@ -56,11 +56,9 @@ int main(int argc, const char *argv[])
                     wordsPath = argv[i];
                     continue;
                 }
-                else
-                {
-                    std::cerr << "No words file specified!\n";
-                    exit(EXIT_FAILURE);
-                }
+
+                std::cerr << "No words file specified!\n";
+                return EXIT_FAILURE;
             }
         }
     }
@@ -75,13 +73,13 @@ int main(int argc, const char *argv[])
         if (!crosswordFile)
         {
             std::cerr << " Unable to open \"" << crosswordPath << "\"!\n";
-            exit(EXIT_FAILURE);
+            return EXIT_FAILURE;
         }
 
         if (!wordsFile)
         {
             std::cerr << " Unable to open \"" << wordsPath << "\"!\n";
-            exit(EXIT_FAILURE);
+            return EXIT_FAILURE;
         }
 
         while (std::getline(crosswordFile, line))
@@ -137,7 +135,7 @@ int main(int argc, const char *argv[])
         if (std::cin.eof())
         {
             std::cerr << "Exit.\n\n";
-            exit(EXIT_FAILURE);
+            return EXIT_FAILURE;
         }
 
         height = inputCrossword.size();
@@ -166,7 +164,7 @@ int main(int argc, const char *argv[])
         if (std::cin.eof())
         {
             std::cerr << "Exit.\n\n";
-            exit(EXIT_FAILURE);
+            return EXIT_FAILURE;
         }
 
         if (words_input.empty())
@@ -211,8 +209,8 @@ int main(int argc, const char *argv[])
         for (const auto &word : words)
             for (size_t l{0}; l + word.length() <= maxLength; ++l)
                 if (std::string_view(line).substr(l, word.length()) == word)
-                    for (size_t m{0}; m < word.length(); ++m)
-                        highlights.at(i).at(l + m) = true;
+                    for (size_t j{0}; j < word.length(); ++j)
+                        highlights.at(i).at(l + j) = true;
     }
 
     for (size_t i{0}; i < maxLength; ++i)
@@ -225,8 +223,8 @@ int main(int argc, const char *argv[])
         for (const auto &word : words)
             for (size_t l{0}; l + word.length() <= height; ++l)
                 if (std::string_view(line).substr(l, word.length()) == word)
-                    for (size_t m{0}; m < word.length(); ++m)
-                        highlights.at(l + m).at(i) = true;
+                    for (size_t j{0}; j < word.length(); ++j)
+                        highlights.at(l + j).at(i) = true;
     }
 
     for (size_t i{0}; i < maxLength; ++i)
@@ -261,8 +259,8 @@ int main(int argc, const char *argv[])
     {
         line.clear();
 
-        for (size_t j = i, k{0}; j && (k < maxLength); --j, ++k)
-            line += (*crossword).at(j - 1).at(k);
+        for (size_t j = i, k{0}; j-- && (k < maxLength); ++k)
+            line += (*crossword).at(j).at(k);
 
         for (const auto &word : words)
             for (size_t l{0}; l + word.length() <= line.length(); ++l)
@@ -275,7 +273,7 @@ int main(int argc, const char *argv[])
     {
         line.clear();
 
-        for (size_t j = i, k{height - 1}; k && (j < maxLength); --k, ++j)
+        for (size_t j = i, k{height}; --k && (j < maxLength); ++j)
             line += (*crossword).at(k).at(j);
 
         for (const auto &word : words)
@@ -290,7 +288,8 @@ int main(int argc, const char *argv[])
         std::cout << ' ';
 
         for (size_t j{0}; j < inputCrossword.at(i).size(); ++j)
-            std::cout << "\33[" << highlights.at(i).at(j) * 31 << "m" << inputCrossword.at(i).at(j) << " ";
+            std::cout << "\33[" << highlights.at(i).at(j) * HIGHLIGHT_COLOR_CODE << "m" << inputCrossword.at(i).at(j)
+                      << " ";
 
         std::cout << '\n';
     }
