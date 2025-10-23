@@ -5,13 +5,12 @@
 #include <unordered_set>
 #include <vector>
 
-#define HIGHLIGHT_COLOR_CODE 31
-
 int main(int argc, const char *argv[])
 {
     size_t maxLength{1}, height;
     bool inputFromFiles, ignoreCase = false;
     const char *crosswordPath = nullptr, *wordsPath = nullptr;
+    int highlightColorCode = 31;
     std::string line;
     std::unordered_set<std::string> words_input;
     std::vector<std::string> *crossword;
@@ -58,6 +57,26 @@ int main(int argc, const char *argv[])
                 }
 
                 std::cerr << "No words file specified!\n";
+                return EXIT_FAILURE;
+            }
+
+            if (!strcmp(option, "--highlight-color"))
+            {
+                if (i + 1 < argc)
+                {
+                    ++i;
+                    highlightColorCode = atoi(argv[i]);
+
+                    if (highlightColorCode < 30 || highlightColorCode > 37)
+                    {
+                        std::cerr << "Invalid ANSI color code!\n";
+                        return EXIT_FAILURE;
+                    }
+
+                    continue;
+                }
+
+                std::cerr << "No color code specified!\n";
                 return EXIT_FAILURE;
             }
         }
@@ -288,7 +307,7 @@ int main(int argc, const char *argv[])
         std::cout << ' ';
 
         for (size_t j{0}; j < inputCrossword.at(i).size(); ++j)
-            std::cout << "\33[" << highlights.at(i).at(j) * HIGHLIGHT_COLOR_CODE << "m" << inputCrossword.at(i).at(j)
+            std::cout << "\33[" << highlights.at(i).at(j) * highlightColorCode << "m" << inputCrossword.at(i).at(j)
                       << " ";
 
         std::cout << '\n';
