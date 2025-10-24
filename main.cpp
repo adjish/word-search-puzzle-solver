@@ -32,6 +32,7 @@ int main(int argc, const char *argv[])
             if (!strcmp(option, "-i"))
             {
                 ignoreCase = true;
+                continue;
             }
 
             if (!strcmp(option, "--crossword-file"))
@@ -79,6 +80,9 @@ int main(int argc, const char *argv[])
                 std::cerr << "No color code specified!\n";
                 return EXIT_FAILURE;
             }
+
+            std::cerr << "Invalid argument or option!\n";
+            return EXIT_FAILURE;
         }
     }
 
