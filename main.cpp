@@ -21,7 +21,8 @@ int main(int argc, const char *argv[])
 
     if (argc == 3)
     {
-        crosswordPath = argv[1], wordsPath = argv[2];
+        crosswordPath = argv[1];
+        wordsPath = argv[2];
     }
     else
     {
