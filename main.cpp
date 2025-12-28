@@ -30,7 +30,7 @@ int main(int argc, const char *argv[])
         {
             const char *option = argv[i];
 
-            if (!strcmp(option, "-i"))
+            if (!strcmp(option, "--ignore-case") || !strcmp(option, "-i"))
             {
                 ignoreCase = true;
                 continue;
@@ -166,7 +166,7 @@ int main(int argc, const char *argv[])
 
         if (!height)
         {
-            std::cerr << " Crossword empty.\n";
+            std::cerr << " Crossword empty.\n\n";
             return EXIT_FAILURE;
         }
 
@@ -193,7 +193,7 @@ int main(int argc, const char *argv[])
 
         if (words_input.empty())
         {
-            std::cerr << " Word list empty.\n";
+            std::cerr << " Word list empty.\n\n";
             return EXIT_FAILURE;
         }
     }
@@ -228,7 +228,7 @@ int main(int argc, const char *argv[])
 
     for (size_t i{height}; i--;)
     {
-        line = ((*crossword)).at(i);
+        line = (*crossword).at(i);
 
         for (const auto &word : words)
             for (size_t l{0}; l + word.length() <= maxLength; ++l)
