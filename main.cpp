@@ -5,12 +5,14 @@
 #include <unordered_set>
 #include <vector>
 
+#define DEFAULT_HIGHLIGHT_COLOR_CODE 31
+
 int main(int argc, const char *argv[])
 {
     size_t maxLength{1}, height;
     bool inputFromFiles, ignoreCase = false;
     const char *crosswordPath = nullptr, *wordsPath = nullptr;
-    int highlightColorCode = 31;
+    int highlightColorCode = DEFAULT_HIGHLIGHT_COLOR_CODE;
     std::string line;
     std::unordered_set<std::string> words_input;
     std::vector<std::string> *crossword;
@@ -309,11 +311,8 @@ int main(int argc, const char *argv[])
 
     for (size_t i{0}; i < height; ++i)
     {
-        std::cout << ' ';
-
         for (size_t j{0}; j < inputCrossword.at(i).size(); ++j)
-            std::cout << "\33[" << highlights.at(i).at(j) * highlightColorCode << "m" << inputCrossword.at(i).at(j)
-                      << " ";
+            std::cout << " \33[" << highlights.at(i).at(j) * highlightColorCode << "m" << inputCrossword.at(i).at(j);
 
         std::cout << '\n';
     }
