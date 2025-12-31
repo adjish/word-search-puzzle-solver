@@ -84,8 +84,25 @@ int main(int argc, const char *argv[])
                 return EXIT_FAILURE;
             }
 
-            std::cerr << "Invalid argument or option!\n";
-            return EXIT_FAILURE;
+            if (strcmp(option, "--help") && strcmp(option, "-h") && strcmp(option, "-?"))
+            {
+                std::cerr << "Invalid argument or option!\n\n";
+            }
+
+            std::cout << "Usage:\t" << argv[0]
+                      << " [crossword-file word-list-file]\n"
+                         "\t-i, --ignore-case\tcase insensitive search\n"
+                         "\t--crossword-file\tpath of crossword file\n"
+                         "\t--words-file\t\tpath of words file\n"
+                         "\t--highlight-color\tANSI code of highlight color\n"
+                         "\t--help\t\t\tshow help\n";
+
+            if (strcmp(option, "--help") && strcmp(option, "-h") && strcmp(option, "-?"))
+            {
+                return EXIT_FAILURE;
+            }
+
+            return EXIT_SUCCESS;
         }
     }
 
