@@ -96,7 +96,7 @@ int main(int argc, const char *argv[])
                          "\t-i, --ignore-case\tcase insensitive search\n"
                          "\t--crossword-file FILE\tpath of crossword file\n"
                          "\t--words-file FILE\tpath of words file\n"
-                         "\t--highlight-color\tANSI code of highlight color\n"
+                         "\t--highlight-color CODE\tANSI code of highlight color\n"
                          "\t--help\t\t\tshow help\n";
 
             if (invalidOption)
