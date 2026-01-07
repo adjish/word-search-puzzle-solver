@@ -10,7 +10,7 @@
 int main(int argc, const char *argv[])
 {
     size_t maxLength{1}, height;
-    bool inputFromFiles, invalidOption, ignoreCase = false;
+    bool inputFromFiles, ignoreCase = false;
     const char *crosswordPath = nullptr, *wordsPath = nullptr;
     int highlightColorCode = DEFAULT_HIGHLIGHT_COLOR_CODE;
     std::string line;
@@ -28,6 +28,8 @@ int main(int argc, const char *argv[])
     }
     else
     {
+        bool invalidOption;
+
         for (int i = 1; i < argc; ++i)
         {
             const char *option = argv[i];
@@ -179,7 +181,7 @@ int main(int argc, const char *argv[])
 
         if (std::cin.eof())
         {
-            std::cerr << "Exit.\n\n";
+            std::cerr << "End of input reached: exit.\n\n";
             return EXIT_FAILURE;
         }
 
@@ -208,7 +210,7 @@ int main(int argc, const char *argv[])
 
         if (std::cin.eof())
         {
-            std::cerr << "Exit.\n\n";
+            std::cerr << "End of input reached: exit.\n\n";
             return EXIT_FAILURE;
         }
 
@@ -219,7 +221,7 @@ int main(int argc, const char *argv[])
         }
     }
 
-    std::vector<std::vector<bool>> highlights(height, std::vector<bool>(maxLength, 0));
+    std::vector<std::vector<bool>> highlights(height, std::vector<bool>(maxLength, false));
     std::vector<std::string_view> words;
 
     words.reserve(words_input.size());
