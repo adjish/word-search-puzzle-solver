@@ -10,9 +10,10 @@
 int main(int argc, const char *argv[])
 {
     size_t maxLength{1}, height;
-    bool inputFromFiles, ignoreCase = false;
+    bool inputFromFiles, ignoreCase{false};
     const char *crosswordPath = nullptr, *wordsPath = nullptr;
-    int highlightColorCode = DEFAULT_HIGHLIGHT_COLOR_CODE;
+    int highlightColorCode{DEFAULT_HIGHLIGHT_COLOR_CODE};
+
     std::string line;
     std::unordered_set<std::string> words_input;
     std::vector<std::string> *crossword;
@@ -32,15 +33,15 @@ int main(int argc, const char *argv[])
 
         for (int i = 1; i < argc; ++i)
         {
-            const char *option = argv[i];
+            std::string_view option{argv[i]};
 
-            if (!strcmp(option, "--ignore-case") || !strcmp(option, "-i"))
+            if (option == "--ignore-case" || option == "-i")
             {
                 ignoreCase = true;
                 continue;
             }
 
-            if (!strcmp(option, "--crossword-file"))
+            if (option == "--crossword-file")
             {
                 if (i + 1 < argc)
                 {
@@ -53,7 +54,7 @@ int main(int argc, const char *argv[])
                 return EXIT_FAILURE;
             }
 
-            if (!strcmp(option, "--words-file"))
+            if (option == "--words-file")
             {
                 if (i + 1 < argc)
                 {
@@ -66,12 +67,12 @@ int main(int argc, const char *argv[])
                 return EXIT_FAILURE;
             }
 
-            if (!strcmp(option, "--highlight-color"))
+            if (option == "--highlight-color")
             {
                 if (i + 1 < argc)
                 {
                     ++i;
-                    highlightColorCode = atoi(argv[i]);
+                    highlightColorCode = std::stoi(argv[i]);
 
                     if (highlightColorCode < 30 || highlightColorCode > 37)
                     {
@@ -86,7 +87,7 @@ int main(int argc, const char *argv[])
                 return EXIT_FAILURE;
             }
 
-            invalidOption = (strcmp(option, "--help") && strcmp(option, "-h") && strcmp(option, "-?"));
+            invalidOption = (option != "--help" && option != "-h" && option != "-?");
 
             if (invalidOption)
             {
