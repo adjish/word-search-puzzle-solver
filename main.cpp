@@ -5,10 +5,10 @@
 #include <unordered_set>
 #include <vector>
 
-#define DEFAULT_HIGHLIGHT_COLOR_CODE 31
-
 int main(int argc, const char *argv[])
 {
+    constexpr int DEFAULT_HIGHLIGHT_COLOR_CODE = 31;
+
     size_t maxLength{1}, height;
     bool inputFromFiles, ignoreCase{false};
     std::string crosswordPath, wordsPath;
