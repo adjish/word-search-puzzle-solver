@@ -254,10 +254,11 @@ int main(int argc, const char *argv[])
     for (size_t i{height}; i--;)
     {
         line = (*crossword).at(i);
+        std::string_view lineView(line);
 
         for (const auto &word : words)
             for (size_t l{0}; l + word.length() <= maxLength; ++l)
-                if (std::string_view(line).substr(l, word.length()) == word)
+                if (lineView.substr(l, word.length()) == word)
                     for (size_t j{0}; j < word.length(); ++j)
                         highlights.at(i).at(l + j) = true;
     }
@@ -269,9 +270,11 @@ int main(int argc, const char *argv[])
         for (size_t j{0}; j < height; ++j)
             line.push_back((*crossword).at(j).at(i));
 
+        std::string_view lineView(line);
+
         for (const auto &word : words)
             for (size_t l{0}; l + word.length() <= height; ++l)
-                if (std::string_view(line).substr(l, word.length()) == word)
+                if (lineView.substr(l, word.length()) == word)
                     for (size_t j{0}; j < word.length(); ++j)
                         highlights.at(l + j).at(i) = true;
     }
@@ -283,9 +286,11 @@ int main(int argc, const char *argv[])
         for (size_t j = i, k{0}; j < maxLength && k < height && (*crossword).at(k).at(j); ++j, ++k)
             line += (*crossword).at(k).at(j);
 
+        std::string_view lineView(line);
+
         for (const auto &word : words)
             for (size_t l{0}; l + word.length() <= line.length(); ++l)
-                if (std::string_view(line).substr(l, word.length()) == word)
+                if (lineView.substr(l, word.length()) == word)
                     for (size_t j{0}; j < word.length(); ++j)
                         highlights.at(l + j).at(l + j + i) = true;
     }
@@ -297,9 +302,11 @@ int main(int argc, const char *argv[])
         for (size_t k = i, j{0}; j < maxLength && k < height; ++j, ++k)
             line += (*crossword).at(k).at(j);
 
+        std::string_view lineView(line);
+
         for (const auto &word : words)
             for (size_t l{0}; l + word.length() <= line.length(); ++l)
-                if (std::string_view(line).substr(l, word.length()) == word)
+                if (lineView.substr(l, word.length()) == word)
                     for (size_t j{0}; j < word.length(); ++j)
                         highlights.at(i + l + j).at(l + j) = true;
     }
@@ -311,9 +318,11 @@ int main(int argc, const char *argv[])
         for (size_t j = i, k{0}; j-- && (k < maxLength); ++k)
             line += (*crossword).at(j).at(k);
 
+        std::string_view lineView(line);
+
         for (const auto &word : words)
             for (size_t l{0}; l + word.length() <= line.length(); ++l)
-                if (std::string_view(line).substr(l, word.length()) == word)
+                if (lineView.substr(l, word.length()) == word)
                     for (size_t j{0}; j < word.length(); ++j)
                         highlights.at(i - l - j - 1).at(l + j) = true;
     }
@@ -325,9 +334,11 @@ int main(int argc, const char *argv[])
         for (size_t j = i, k{height}; --k && (j < maxLength); ++j)
             line += (*crossword).at(k).at(j);
 
+        std::string_view lineView(line);
+
         for (const auto &word : words)
             for (size_t l{0}; l + word.length() <= line.length(); ++l)
-                if (std::string_view(line).substr(l, word.length()) == word)
+                if (lineView.substr(l, word.length()) == word)
                     for (size_t j{0}; j < word.length(); ++j)
                         highlights.at(height - 1 - l - j).at(l + j + i) = true;
     }
