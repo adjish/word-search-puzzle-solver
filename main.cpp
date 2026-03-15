@@ -22,7 +22,7 @@ int main(int argc, const char *argv[])
 
     std::ios_base::sync_with_stdio(false);
 
-    if (argc == 3)
+    if (argc == 3 && !(args[1][0] == '-') && !(args[2][0] == '-'))
     {
         crosswordPath = args[1];
         wordsPath = args[2];
@@ -73,7 +73,16 @@ int main(int argc, const char *argv[])
                 if (i + 1 < args_number)
                 {
                     ++i;
-                    highlightColorCode = std::stoi(args[i]);
+
+                    try
+                    {
+                        highlightColorCode = std::stoi(args[i]);
+                    }
+                    catch (const std::exception &)
+                    {
+                        std::cerr << "Invalid color code!\n";
+                        return EXIT_FAILURE;
+                    }
 
                     if (highlightColorCode < 30 || highlightColorCode > 37)
                     {
@@ -331,7 +340,7 @@ int main(int argc, const char *argv[])
     {
         line.clear();
 
-        for (size_t j = i, k{height}; --k && (j < maxLength); ++j)
+        for (size_t j = i, k{height}; k-- && (j < maxLength); ++j)
             line += (*crossword).at(k).at(j);
 
         std::string_view lineView(line);
