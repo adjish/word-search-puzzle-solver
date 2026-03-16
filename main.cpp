@@ -9,32 +9,29 @@ int main(int argc, const char *argv[])
 {
     constexpr int DEFAULT_HIGHLIGHT_COLOR_CODE = 31;
 
-    size_t maxLength{1}, height;
-    bool inputFromFiles, ignoreCase{false};
+    bool ignoreCase{false};
     std::string crosswordPath, wordsPath;
     int highlightColorCode{DEFAULT_HIGHLIGHT_COLOR_CODE};
 
     std::string line;
     std::unordered_set<std::string> words_input;
-    std::vector<std::string> *crossword;
     std::vector<std::string> inputCrossword, crosswordLowered, args(argv, argv + argc);
     std::ifstream crosswordFile, wordsFile;
 
     std::ios_base::sync_with_stdio(false);
 
-    if (argc == 3 && !(args[1][0] == '-') && !(args[2][0] == '-'))
+    if (argc == 3 && !(args.at(1).front() == '-') && !(args.at(2).front() == '-'))
     {
-        crosswordPath = args[1];
-        wordsPath = args[2];
+        crosswordPath = args.at(1);
+        wordsPath = args.at(2);
     }
     else
     {
-        size_t args_number = static_cast<size_t>(argc);
-        bool invalidOption;
+        auto args_number = static_cast<size_t>(argc);
 
         for (size_t i = 1; i < args_number; ++i)
         {
-            std::string_view option{args[i]};
+            std::string_view option{args.at(i)};
 
             if (option == "--ignore-case" || option == "-i")
             {
@@ -47,7 +44,7 @@ int main(int argc, const char *argv[])
                 if (i + 1 < args_number)
                 {
                     ++i;
-                    crosswordPath = args[i];
+                    crosswordPath = args.at(i);
                     continue;
                 }
 
@@ -60,7 +57,7 @@ int main(int argc, const char *argv[])
                 if (i + 1 < args_number)
                 {
                     ++i;
-                    wordsPath = args[i];
+                    wordsPath = args.at(i);
                     continue;
                 }
 
@@ -76,7 +73,7 @@ int main(int argc, const char *argv[])
 
                     try
                     {
-                        highlightColorCode = std::stoi(args[i]);
+                        highlightColorCode = std::stoi(args.at(i));
                     }
                     catch (const std::exception &)
                     {
@@ -97,14 +94,14 @@ int main(int argc, const char *argv[])
                 return EXIT_FAILURE;
             }
 
-            invalidOption = (option != "--help" && option != "-h" && option != "-?");
+            bool invalidOption = (option != "--help" && option != "-h" && option != "-?");
 
             if (invalidOption)
             {
                 std::cerr << "Invalid argument or option!\n\n";
             }
 
-            std::cout << "Usage:\t" << args[0]
+            std::cout << "Usage:\t" << args.front()
                       << " [crossword-file word-list-file]\n"
                          "\t-i, --ignore-case\tcase insensitive search\n"
                          "\t--crossword-file FILE\tpath of crossword file\n"
@@ -121,7 +118,8 @@ int main(int argc, const char *argv[])
         }
     }
 
-    inputFromFiles = crosswordPath.size() && wordsPath.size();
+    size_t maxLength{1}, height;
+    bool inputFromFiles = crosswordPath.size() && wordsPath.size();
 
     if (inputFromFiles)
     {
@@ -238,6 +236,8 @@ int main(int argc, const char *argv[])
     words.reserve(words_input.size());
 
     std::copy(words_input.begin(), words_input.end(), std::back_inserter(words));
+
+    std::vector<std::string> *crossword;
 
     if (ignoreCase)
     {
