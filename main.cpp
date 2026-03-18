@@ -185,7 +185,7 @@ int main(int argc, const char *argv[])
 
             inputCrossword.push_back(line);
 
-            std::cout << ' ';
+            std::cout.put(' ');
         }
 
         if (std::cin.eof())
@@ -214,7 +214,7 @@ int main(int argc, const char *argv[])
             words_input.insert(line);
             words_input.insert(std::string(line.rbegin(), line.rend()));
 
-            std::cout << ' ';
+            std::cout.put(' ');
         }
 
         if (std::cin.eof())
@@ -349,7 +349,7 @@ int main(int argc, const char *argv[])
             for (size_t l{0}; l + word.length() <= line.length(); ++l)
                 if (lineView.substr(l, word.length()) == word)
                     for (size_t j{0}; j < word.length(); ++j)
-                        highlights.at(height - 1 - l - j).at(l + j + i) = true;
+                        highlights.at(height - l - j - 1).at(l + j + i) = true;
     }
 
     for (size_t i{0}; i < height; ++i)
@@ -358,12 +358,12 @@ int main(int argc, const char *argv[])
             std::cout << " \33[" << (highlights.at(i).at(j) ? highlightColorCode : 0) << "m"
                       << inputCrossword.at(i).at(j);
 
-        std::cout << '\n';
+        std::cout.put('\n');
     }
 
     if (!inputFromFiles)
     {
-        std::cout << '\n';
+        std::cout.put('\n');
     }
 
     std::cout << "\33[0m";
