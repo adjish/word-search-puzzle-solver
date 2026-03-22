@@ -10,10 +10,9 @@ int main(int argc, const char *argv[])
     constexpr int DEFAULT_HIGHLIGHT_COLOR_CODE = 31;
 
     bool ignoreCase{false};
-    std::string crosswordPath, wordsPath;
     int highlightColorCode{DEFAULT_HIGHLIGHT_COLOR_CODE};
 
-    std::string line;
+    std::string crosswordPath, wordsPath;
     std::unordered_set<std::string> words_input;
     std::vector<std::string> inputCrossword, crosswordLowered, args(argv, argv + argc);
     std::ifstream crosswordFile, wordsFile;
@@ -120,6 +119,8 @@ int main(int argc, const char *argv[])
 
     size_t maxLength{1}, height;
     bool const inputFromFiles = crosswordPath.size() && wordsPath.size();
+
+    std::string line;
 
     if (inputFromFiles)
     {
