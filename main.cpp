@@ -21,8 +21,8 @@ int main(int argc, const char *argv[])
 
     if (argc == 3 && !(args.at(1).front() == '-') && !(args.at(2).front() == '-'))
     {
-        crosswordPath = args.at(1);
-        wordsPath = args.at(2);
+        crosswordPath = std::move(args.at(1));
+        wordsPath = std::move(args.at(2));
     }
     else
     {
@@ -43,7 +43,7 @@ int main(int argc, const char *argv[])
                 if (i + 1 < args_number)
                 {
                     ++i;
-                    crosswordPath = args.at(i);
+                    crosswordPath = std::move(args.at(i));
                     continue;
                 }
 
@@ -56,7 +56,7 @@ int main(int argc, const char *argv[])
                 if (i + 1 < args_number)
                 {
                     ++i;
-                    wordsPath = args.at(i);
+                    wordsPath = std::move(args.at(i));
                     continue;
                 }
 
