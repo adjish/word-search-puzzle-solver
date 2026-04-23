@@ -76,7 +76,7 @@ int main(int argc, const char *argv[])
                     }
                     catch (const std::exception &)
                     {
-                        std::cerr << "Invalid color code!\n";
+                        std::cerr << "Not a valid integer!\n";
                         return EXIT_FAILURE;
                     }
 
