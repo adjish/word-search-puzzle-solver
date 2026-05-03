@@ -234,6 +234,7 @@ int main(int argc, const char *argv[])
     std::vector<std::vector<bool>> highlights(height, std::vector<bool>(maxLength, false));
     std::vector<std::string_view> words;
 
+    line.reserve(std::max(height, maxLength));
     words.reserve(words_input.size());
 
     std::copy(words_input.begin(), words_input.end(), std::back_inserter(words));
