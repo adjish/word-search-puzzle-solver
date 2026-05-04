@@ -19,7 +19,7 @@ int main(int argc, const char *argv[])
 
     std::ios_base::sync_with_stdio(false);
 
-    if (argc == 3 && !(args.at(1).front() == '-') && !(args.at(2).front() == '-'))
+    if (argc == 3 && args.at(1).front() != '-' && args.at(2).front() != '-')
     {
         crosswordPath = std::move(args.at(1));
         wordsPath = std::move(args.at(2));
@@ -118,7 +118,7 @@ int main(int argc, const char *argv[])
     }
 
     size_t maxLength{1}, height;
-    bool const inputFromFiles = crosswordPath.size() && wordsPath.size();
+    bool const inputFromFiles = !crosswordPath.empty() && !wordsPath.empty();
 
     std::string line;
 
@@ -143,13 +143,12 @@ int main(int argc, const char *argv[])
         {
             inputCrossword.push_back(line);
 
-            if (maxLength < line.length())
-                maxLength = line.length();
+            maxLength = std::max(maxLength, line.length());
         }
 
         height = inputCrossword.size();
 
-        if (!height)
+        if (height == 0U)
         {
             std::cerr << " Crossword empty.\n";
             return EXIT_FAILURE;
@@ -179,10 +178,9 @@ int main(int argc, const char *argv[])
     {
         std::cout << "\n Enter your crossword:\n\n ";
 
-        while (std::getline(std::cin, line) && line.length())
+        while (std::getline(std::cin, line) && !line.empty())
         {
-            if (maxLength < line.length())
-                maxLength = line.length();
+            maxLength = std::max(maxLength, line.length());
 
             inputCrossword.push_back(line);
 
@@ -197,7 +195,7 @@ int main(int argc, const char *argv[])
 
         height = inputCrossword.size();
 
-        if (!height)
+        if (height != 0U)
         {
             std::cerr << " Crossword empty.\n\n";
             return EXIT_FAILURE;
@@ -205,7 +203,7 @@ int main(int argc, const char *argv[])
 
         std::cout << " Enter the words to search in the crossword:\n\n ";
 
-        while (std::getline(std::cin, line) && line.length())
+        while (std::getline(std::cin, line) && !line.empty())
         {
             if (ignoreCase)
             {
