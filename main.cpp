@@ -195,7 +195,7 @@ int main(int argc, const char *argv[])
 
         height = inputCrossword.size();
 
-        if (height != 0U)
+        if (height == 0U)
         {
             std::cerr << " Crossword empty.\n\n";
             return EXIT_FAILURE;
