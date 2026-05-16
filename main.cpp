@@ -241,7 +241,7 @@ int main(int argc, const char *argv[])
 
     if (ignoreCase)
     {
-        for (auto string : inputCrossword)
+        for (auto &string : inputCrossword)
         {
             std::transform(string.begin(), string.end(), string.begin(),
                            [](unsigned char c) { return std::tolower(c); });
