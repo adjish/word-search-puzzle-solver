@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cctype>
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -119,6 +120,12 @@ int main(int argc, const char *argv[])
 
     size_t maxLength{1}, height;
     bool const inputFromFiles = !crosswordPath.empty() && !wordsPath.empty();
+
+    if (crosswordPath.empty() != wordsPath.empty())
+    {
+        std::cerr << "Both files must be specified.\n";
+        return EXIT_FAILURE;
+    }
 
     std::string line;
 
@@ -277,7 +284,7 @@ int main(int argc, const char *argv[])
         line.clear();
 
         for (size_t j{0}; j < height; ++j)
-            line.push_back((*crossword).at(j).at(i));
+            line += (*crossword).at(j).at(i);
 
         std::string_view const lineView(line);
 
@@ -292,7 +299,7 @@ int main(int argc, const char *argv[])
     {
         line.clear();
 
-        for (size_t j = i, k{0}; j < maxLength && k < height && (*crossword).at(k).at(j); ++j, ++k)
+        for (size_t j = i, k{0}; j < maxLength && k < height; ++j, ++k)
             line += (*crossword).at(k).at(j);
 
         std::string_view const lineView(line);
@@ -355,7 +362,7 @@ int main(int argc, const char *argv[])
     for (size_t i{0}; i < height; ++i)
     {
         for (size_t j{0}; j < inputCrossword.at(i).size(); ++j)
-            std::cout << " \33[" << (highlights.at(i).at(j) ? highlightColorCode : 0) << "m"
+            std::cout << "\x1b[" << (highlights.at(i).at(j) ? highlightColorCode : 0) << "m"
                       << inputCrossword.at(i).at(j);
 
         std::cout.put('\n');
@@ -366,5 +373,5 @@ int main(int argc, const char *argv[])
         std::cout.put('\n');
     }
 
-    std::cout << "\33[0m";
+    std::cout << "\x1b[0m";
 }
