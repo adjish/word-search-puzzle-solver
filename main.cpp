@@ -237,12 +237,9 @@ int main(int argc, const char *argv[])
     }
 
     std::vector<std::vector<bool>> highlights(height, std::vector<bool>(maxLength, false));
-    std::vector<std::string_view> words;
+    std::vector<std::string> words(words_input.begin(), words_input.end());
 
     line.reserve(std::max(height, maxLength));
-    words.reserve(words_input.size());
-
-    std::copy(words_input.begin(), words_input.end(), std::back_inserter(words));
 
     std::vector<std::string> *crossword;
 
@@ -362,7 +359,7 @@ int main(int argc, const char *argv[])
     for (size_t i{0}; i < height; ++i)
     {
         for (size_t j{0}; j < inputCrossword.at(i).size(); ++j)
-            std::cout << "\x1b[" << (highlights.at(i).at(j) ? highlightColorCode : 0) << "m"
+            std::cout << " \x1b[" << (highlights.at(i).at(j) ? highlightColorCode : 0) << "m"
                       << inputCrossword.at(i).at(j);
 
         std::cout.put('\n');
