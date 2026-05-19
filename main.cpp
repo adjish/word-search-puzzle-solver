@@ -245,11 +245,12 @@ int main(int argc, const char *argv[])
 
     if (ignoreCase)
     {
-        for (auto &string : inputCrossword)
+        crosswordLowered = inputCrossword;
+
+        for (auto &string : crosswordLowered)
         {
             std::transform(string.begin(), string.end(), string.begin(),
                            [](unsigned char c) { return std::tolower(c); });
-            crosswordLowered.push_back(string);
         }
 
         crossword = &crosswordLowered;
@@ -328,8 +329,8 @@ int main(int argc, const char *argv[])
     {
         line.clear();
 
-        for (size_t j = i, k{0}; j-- && (k < maxLength); ++k)
-            line += (*crossword).at(j).at(k);
+        for (size_t j = i, k{0}; j && (k < maxLength); ++k)
+            line += (*crossword).at(--j).at(k);
 
         std::string_view const lineView(line);
 
@@ -344,8 +345,8 @@ int main(int argc, const char *argv[])
     {
         line.clear();
 
-        for (size_t j = i, k{height}; k-- && (j < maxLength); ++j)
-            line += (*crossword).at(k).at(j);
+        for (size_t j = i, k{height}; k && (j < maxLength); ++j)
+            line += (*crossword).at(--k).at(j);
 
         std::string_view const lineView(line);
 
