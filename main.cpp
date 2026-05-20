@@ -20,7 +20,8 @@ int main(int argc, const char *argv[])
 
     std::ios_base::sync_with_stdio(false);
 
-    if (argc == 3 && args.at(1).front() != '-' && args.at(2).front() != '-')
+    if (argc == 3 && !args.at(1).empty() && args.at(1).front() != '-' && !args.at(2).empty() &&
+        args.at(2).front() != '-')
     {
         crosswordPath = std::move(args.at(1));
         wordsPath = std::move(args.at(2));
