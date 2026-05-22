@@ -2,6 +2,7 @@
 #include <cctype>
 #include <fstream>
 #include <iostream>
+#include <locale>
 #include <unordered_set>
 #include <vector>
 
@@ -164,7 +165,10 @@ int main(int argc, const char *argv[])
         {
             if (ignoreCase)
             {
-                std::transform(line.begin(), line.end(), line.begin(), [](unsigned char c) { return std::tolower(c); });
+                std::locale loc("");
+
+                std::transform(line.begin(), line.end(), line.begin(),
+                               [&loc](unsigned char c) { return std::tolower(c, loc); });
             }
 
             words_input.insert(line);
