@@ -17,6 +17,16 @@ int main(int argc, const char *argv[])
     std::unordered_set<std::string> words_input;
     std::vector<std::string> inputCrossword, crosswordLowered, args(argv, argv + argc);
     std::ifstream crosswordFile, wordsFile;
+    std::locale loc;
+
+    try
+    {
+        loc = std::locale("");
+    }
+    catch (const std::runtime_error &)
+    {
+        loc = std::locale::classic();
+    }
 
     std::ios_base::sync_with_stdio(false);
 
@@ -165,10 +175,8 @@ int main(int argc, const char *argv[])
         {
             if (ignoreCase)
             {
-                std::locale loc("");
-
                 std::transform(line.begin(), line.end(), line.begin(),
-                               [&loc](unsigned char c) { return std::tolower(c, loc); });
+                               [&loc](unsigned char c) { return std::use_facet<std::ctype<char>>(loc).tolower(c); });
             }
 
             words_input.insert(line);
@@ -217,7 +225,8 @@ int main(int argc, const char *argv[])
         {
             if (ignoreCase)
             {
-                std::transform(line.begin(), line.end(), line.begin(), [](unsigned char c) { return std::tolower(c); });
+                std::transform(line.begin(), line.end(), line.begin(),
+                               [&loc](unsigned char c) { return std::use_facet<std::ctype<char>>(loc).tolower(c); });
             }
 
             words_input.insert(line);
@@ -253,7 +262,7 @@ int main(int argc, const char *argv[])
         for (auto &string : crosswordLowered)
         {
             std::transform(string.begin(), string.end(), string.begin(),
-                           [](unsigned char c) { return std::tolower(c); });
+                           [&loc](unsigned char c) { return std::use_facet<std::ctype<char>>(loc).tolower(c); });
         }
 
         crossword = &crosswordLowered;
