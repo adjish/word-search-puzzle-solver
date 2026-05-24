@@ -176,7 +176,7 @@ int main(int argc, const char *argv[])
             if (ignoreCase)
             {
                 std::transform(line.begin(), line.end(), line.begin(),
-                               [&loc](unsigned char c) { return std::use_facet<std::ctype<char>>(loc).tolower(c); });
+                               [&loc](char c) { return std::use_facet<std::ctype<char>>(loc).tolower(c); });
             }
 
             words_input.insert(line);
@@ -226,7 +226,7 @@ int main(int argc, const char *argv[])
             if (ignoreCase)
             {
                 std::transform(line.begin(), line.end(), line.begin(),
-                               [&loc](unsigned char c) { return std::use_facet<std::ctype<char>>(loc).tolower(c); });
+                               [&loc](char c) { return std::use_facet<std::ctype<char>>(loc).tolower(c); });
             }
 
             words_input.insert(line);
@@ -262,7 +262,7 @@ int main(int argc, const char *argv[])
         for (auto &string : crosswordLowered)
         {
             std::transform(string.begin(), string.end(), string.begin(),
-                           [&loc](unsigned char c) { return std::use_facet<std::ctype<char>>(loc).tolower(c); });
+                           [&loc](char c) { return std::use_facet<std::ctype<char>>(loc).tolower(c); });
         }
 
         crossword = &crosswordLowered;
