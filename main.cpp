@@ -128,7 +128,7 @@ int main(int argc, const char *argv[])
         }
     }
 
-    size_t maxLength{1}, height;
+    size_t maxLength{1}, height{0};
     bool const inputFromFiles = !crosswordPath.empty() && !wordsPath.empty();
 
     if (crosswordPath.empty() != wordsPath.empty())
