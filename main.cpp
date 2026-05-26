@@ -279,8 +279,7 @@ int main(int argc, const char *argv[])
 
     for (size_t i{height}; i--;)
     {
-        line = (*crossword)[i];
-        std::string_view const lineView(line);
+        std::string_view const lineView((*crossword)[i]);
 
         for (const auto &word : words)
             for (size_t l{0}; l + word.length() <= maxLength; ++l)
