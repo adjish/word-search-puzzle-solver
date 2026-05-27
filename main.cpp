@@ -28,6 +28,8 @@ int main(int argc, const char *argv[])
         loc = std::locale::classic();
     }
 
+    auto const &ctype = std::use_facet<std::ctype<char>>(loc);
+
     std::ios_base::sync_with_stdio(false);
 
     if (argc == 3 && !args[1].empty() && args[1].front() != '-' && !args[2].empty() && args[2].front() != '-')
@@ -175,8 +177,7 @@ int main(int argc, const char *argv[])
         {
             if (ignoreCase)
             {
-                std::transform(line.begin(), line.end(), line.begin(),
-                               [&loc](char c) { return std::use_facet<std::ctype<char>>(loc).tolower(c); });
+                std::transform(line.begin(), line.end(), line.begin(), [&ctype](char c) { return ctype.tolower(c); });
             }
 
             words_input.insert(line);
@@ -225,8 +226,7 @@ int main(int argc, const char *argv[])
         {
             if (ignoreCase)
             {
-                std::transform(line.begin(), line.end(), line.begin(),
-                               [&loc](char c) { return std::use_facet<std::ctype<char>>(loc).tolower(c); });
+                std::transform(line.begin(), line.end(), line.begin(), [&ctype](char c) { return ctype.tolower(c); });
             }
 
             words_input.insert(line);
@@ -261,8 +261,7 @@ int main(int argc, const char *argv[])
 
         for (auto &string : crosswordLowered)
         {
-            std::transform(string.begin(), string.end(), string.begin(),
-                           [&loc](char c) { return std::use_facet<std::ctype<char>>(loc).tolower(c); });
+            std::transform(string.begin(), string.end(), string.begin(), [&ctype](char c) { return ctype.tolower(c); });
         }
 
         crossword = &crosswordLowered;
