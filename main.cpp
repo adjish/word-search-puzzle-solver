@@ -15,7 +15,7 @@ int main(int argc, const char *argv[])
 
     std::string crosswordPath, wordsPath;
     std::unordered_set<std::string> words_input;
-    std::vector<std::string> inputCrossword, crosswordLowered, args(argv, argv + argc);
+    std::vector<std::string> inputCrossword, crosswordLowered, args{argv, argv + argc};
     std::ifstream crosswordFile, wordsFile;
     std::locale loc;
 
@@ -248,7 +248,7 @@ int main(int argc, const char *argv[])
         }
     }
 
-    std::vector<std::vector<bool>> highlights(height, std::vector<bool>(maxLength, false));
+    std::vector<std::vector<bool>> highlights(height, std::vector<bool>(maxLength));
     std::vector<std::string> words(words_input.begin(), words_input.end());
 
     line.reserve(std::max(height, maxLength));
