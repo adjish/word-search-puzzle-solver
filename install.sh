@@ -2,9 +2,6 @@
 
 set -e
 
-cmake -B build
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
-cmake -DCMAKE_BUILD_TYPE=Release build
-cd build || exit 1
-echo 'Installing...'
-sudo make install
+sudo cmake --install build
