@@ -93,7 +93,10 @@ int main(int argc, const char *argv[])
                         return EXIT_FAILURE;
                     }
 
-                    if (highlightColorCode < 30 || highlightColorCode > 37)
+                    bool const validColor = (highlightColorCode >= 30 && highlightColorCode <= 37) ||
+                                            (highlightColorCode >= 90 && highlightColorCode <= 97);
+
+                    if (!validColor)
                     {
                         std::cerr << "Invalid ANSI color code!\n";
                         return EXIT_FAILURE;
@@ -118,7 +121,7 @@ int main(int argc, const char *argv[])
                          "\t-i, --ignore-case\tcase insensitive search\n"
                          "\t--crossword-file FILE\tpath of crossword file\n"
                          "\t--words-file FILE\tpath of words file\n"
-                         "\t--highlight-color CODE\tANSI code of highlight color\n"
+                         "\t--highlight-color CODE\tANSI code of highlight color (30-37 or 90-97)\n"
                          "\t--help\t\t\tshow help\n";
 
             if (invalidOption)
