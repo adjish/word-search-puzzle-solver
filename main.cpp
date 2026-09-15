@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <cctype>
 #include <fstream>
 #include <iostream>
 #include <locale>
@@ -133,7 +132,7 @@ int main(int argc, const char *argv[])
         }
     }
 
-    size_t maxLength{1}, height{0};
+    size_t maxLength{1};
     bool const inputFromFiles = !crosswordPath.empty() && !wordsPath.empty();
 
     if (crosswordPath.empty() != wordsPath.empty())
@@ -168,9 +167,7 @@ int main(int argc, const char *argv[])
             maxLength = std::max(maxLength, line.length());
         }
 
-        height = inputCrossword.size();
-
-        if (height == 0U)
+        if (inputCrossword.empty())
         {
             std::cerr << " Crossword empty.\n";
             return EXIT_FAILURE;
@@ -215,9 +212,7 @@ int main(int argc, const char *argv[])
             return EXIT_FAILURE;
         }
 
-        height = inputCrossword.size();
-
-        if (height == 0U)
+        if (inputCrossword.empty())
         {
             std::cerr << " Crossword empty.\n\n";
             return EXIT_FAILURE;
@@ -250,6 +245,8 @@ int main(int argc, const char *argv[])
             return EXIT_FAILURE;
         }
     }
+
+    const size_t height = inputCrossword.size();
 
     std::vector<std::vector<bool>> highlights(height, std::vector<bool>(maxLength));
     std::vector<std::string> words(words_input.begin(), words_input.end());
