@@ -259,9 +259,9 @@ int main(int argc, const char *argv[])
     {
         crosswordLowered = inputCrossword;
 
-        for (auto &string : crosswordLowered)
+        for (auto &row : crosswordLowered)
         {
-            std::transform(string.begin(), string.end(), string.begin(), [&ctype](char c) { return ctype.tolower(c); });
+            std::transform(row.begin(), row.end(), row.begin(), [&ctype](char c) { return ctype.tolower(c); });
         }
 
         crossword = &crosswordLowered;
@@ -271,9 +271,9 @@ int main(int argc, const char *argv[])
         crossword = &inputCrossword;
     }
 
-    for (auto &string : (*crossword))
+    for (auto &row : (*crossword))
     {
-        string.resize(maxLength);
+        row.resize(maxLength);
     }
 
     for (size_t i{height}; i--;)
