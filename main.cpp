@@ -281,10 +281,17 @@ int main(int argc, const char *argv[])
         std::string_view const lineView((*crossword)[i]);
 
         for (const auto &word : words)
-            for (size_t l{0}; l + word.length() <= maxLength; ++l)
-                if (lineView.substr(l, word.length()) == word)
-                    for (size_t j{0}; j < word.length(); ++j)
-                        highlights[i][l + j] = true;
+        {
+            size_t position = 0;
+
+            while ((position = lineView.find(word, position)) != std::string_view::npos)
+            {
+                for (size_t j{0}; j < word.length(); ++j)
+                    highlights[i][position + j] = true;
+
+                position++;
+            }
+        }
     }
 
     for (size_t i{0}; i < maxLength; ++i)
@@ -297,10 +304,17 @@ int main(int argc, const char *argv[])
         std::string_view const lineView(line);
 
         for (const auto &word : words)
-            for (size_t l{0}; l + word.length() <= height; ++l)
-                if (lineView.substr(l, word.length()) == word)
-                    for (size_t j{0}; j < word.length(); ++j)
-                        highlights[l + j][i] = true;
+        {
+            size_t position = 0;
+
+            while ((position = lineView.find(word, position)) != std::string_view::npos)
+            {
+                for (size_t j{0}; j < word.length(); ++j)
+                    highlights[position + j][i] = true;
+
+                position++;
+            }
+        }
     }
 
     for (size_t i{0}; i < maxLength; ++i)
@@ -313,10 +327,17 @@ int main(int argc, const char *argv[])
         std::string_view const lineView(line);
 
         for (const auto &word : words)
-            for (size_t l{0}; l + word.length() <= line.length(); ++l)
-                if (lineView.substr(l, word.length()) == word)
-                    for (size_t j{0}; j < word.length(); ++j)
-                        highlights[l + j][l + j + i] = true;
+        {
+            size_t position = 0;
+
+            while ((position = lineView.find(word, position)) != std::string_view::npos)
+            {
+                for (size_t j{0}; j < word.length(); ++j)
+                    highlights[position + j][position + j + i] = true;
+
+                position++;
+            }
+        }
     }
 
     for (size_t i{1}; i < height; ++i)
@@ -329,10 +350,17 @@ int main(int argc, const char *argv[])
         std::string_view const lineView(line);
 
         for (const auto &word : words)
-            for (size_t l{0}; l + word.length() <= line.length(); ++l)
-                if (lineView.substr(l, word.length()) == word)
-                    for (size_t j{0}; j < word.length(); ++j)
-                        highlights[i + l + j][l + j] = true;
+        {
+            size_t position = 0;
+
+            while ((position = lineView.find(word, position)) != std::string_view::npos)
+            {
+                for (size_t j{0}; j < word.length(); ++j)
+                    highlights[i + position + j][position + j] = true;
+
+                position++;
+            }
+        }
     }
 
     for (size_t i{1}; i <= height; ++i)
@@ -345,10 +373,17 @@ int main(int argc, const char *argv[])
         std::string_view const lineView(line);
 
         for (const auto &word : words)
-            for (size_t l{0}; l + word.length() <= line.length(); ++l)
-                if (lineView.substr(l, word.length()) == word)
-                    for (size_t j{0}; j < word.length(); ++j)
-                        highlights[i - l - j - 1][l + j] = true;
+        {
+            size_t position = 0;
+
+            while ((position = lineView.find(word, position)) != std::string_view::npos)
+            {
+                for (size_t j{0}; j < word.length(); ++j)
+                    highlights[i - position - j - 1][position + j] = true;
+
+                position++;
+            }
+        }
     }
 
     for (size_t i{1}; i <= maxLength; ++i)
@@ -361,10 +396,17 @@ int main(int argc, const char *argv[])
         std::string_view const lineView(line);
 
         for (const auto &word : words)
-            for (size_t l{0}; l + word.length() <= line.length(); ++l)
-                if (lineView.substr(l, word.length()) == word)
-                    for (size_t j{0}; j < word.length(); ++j)
-                        highlights[height - l - j - 1][l + j + i] = true;
+        {
+            size_t position = 0;
+
+            while ((position = lineView.find(word, position)) != std::string_view::npos)
+            {
+                for (size_t j{0}; j < word.length(); ++j)
+                    highlights[height - position - j - 1][position + j + i] = true;
+
+                position++;
+            }
+        }
     }
 
     for (size_t i{0}; i < height; ++i)
