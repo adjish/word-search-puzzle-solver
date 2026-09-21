@@ -206,15 +206,15 @@ int main(int argc, const char *argv[])
             std::cout.put(' ');
         }
 
-        if (std::cin.eof())
-        {
-            std::cerr << "End of input reached: exit.\n\n";
-            return EXIT_FAILURE;
-        }
-
         if (inputCrossword.empty())
         {
             std::cerr << " Crossword empty.\n\n";
+            return EXIT_FAILURE;
+        }
+
+        if (std::cin.eof())
+        {
+            std::cerr << "End of input reached: exit.\n\n";
             return EXIT_FAILURE;
         }
 
@@ -233,15 +233,10 @@ int main(int argc, const char *argv[])
             std::cout.put(' ');
         }
 
-        if (std::cin.eof())
-        {
-            std::cerr << "End of input reached: exit.\n\n";
-            return EXIT_FAILURE;
-        }
-
         if (words_input.empty())
         {
-            std::cerr << " Word list empty.\n\n";
+            std::cerr << (std::cin.eof() ? "End of input reached: exit.\n\n" : " Word list empty.\n\n");
+
             return EXIT_FAILURE;
         }
     }
