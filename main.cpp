@@ -15,7 +15,6 @@ int main(int argc, const char *argv[])
     std::string crosswordPath, wordsPath;
     std::unordered_set<std::string> words_input;
     std::vector<std::string> inputCrossword, crosswordLowered, args{argv, argv + argc};
-    std::ifstream crosswordFile, wordsFile;
     std::locale loc;
 
     try
@@ -145,8 +144,7 @@ int main(int argc, const char *argv[])
 
     if (inputFromFiles)
     {
-        crosswordFile.open(crosswordPath);
-        wordsFile.open(wordsPath);
+        std::ifstream crosswordFile(crosswordPath), wordsFile(wordsPath);
 
         if (!crosswordFile)
         {
@@ -189,9 +187,6 @@ int main(int argc, const char *argv[])
             std::cerr << " Word list empty.\n";
             return EXIT_FAILURE;
         }
-
-        crosswordFile.close();
-        wordsFile.close();
     }
     else
     {
