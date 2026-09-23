@@ -5,7 +5,7 @@
 #include <unordered_set>
 #include <vector>
 
-int main(int argc, const char *argv[])
+int main(int argc, char *argv[])
 {
     constexpr int DEFAULT_HIGHLIGHT_COLOR_CODE = 31;
 
