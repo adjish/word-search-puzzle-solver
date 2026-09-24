@@ -203,13 +203,7 @@ int main(int argc, char *argv[])
 
         if (inputCrossword.empty())
         {
-            std::cerr << " Crossword empty.\n\n";
-            return EXIT_FAILURE;
-        }
-
-        if (std::cin.eof())
-        {
-            std::cerr << "End of input reached: exit.\n\n";
+            std::cerr << (std::cin.eof() ? "End of input reached: exit.\n\n" : " Crossword empty.\n\n");
             return EXIT_FAILURE;
         }
 
