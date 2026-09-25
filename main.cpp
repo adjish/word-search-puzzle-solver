@@ -207,6 +207,12 @@ int main(int argc, char *argv[])
             return EXIT_FAILURE;
         }
 
+        if (std::cin.eof())
+        {
+            std::cerr << "Unexpected end of input: crossword must be followed by an empty line and word list.\n\n";
+            return EXIT_FAILURE;
+        }
+
         std::cout << " Enter the words to search in the crossword:\n\n ";
 
         while (std::getline(std::cin, line) && !line.empty())
