@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <locale>
+#include <stdexcept>
 #include <unordered_set>
 #include <vector>
 
@@ -30,6 +31,16 @@ int main(int argc, char *argv[])
 
     std::ios_base::sync_with_stdio(false);
 
+    auto print_usage = [&args]() {
+        std::cout << "Usage:\t" << args[0]
+                  << " [crossword-file word-list-file]\n"
+                     "\t-i, --ignore-case\tcase insensitive search\n"
+                     "\t--crossword-file FILE\tpath of crossword file\n"
+                     "\t--words-file FILE\tpath of words file\n"
+                     "\t--highlight-color CODE\tANSI code of highlight color (30-37 or 90-97)\n"
+                     "\t--help\t\t\tshow help\n";
+    };
+
     if (argc == 3 && !args[1].empty() && args[1].front() != '-' && !args[2].empty() && args[2].front() != '-')
     {
         crosswordPath = std::move(args[1]);
@@ -46,88 +57,70 @@ int main(int argc, char *argv[])
             if (option == "--ignore-case" || option == "-i")
             {
                 ignoreCase = true;
-                continue;
             }
-
-            if (option == "--crossword-file")
+            else if (option == "--crossword-file")
             {
                 if (i + 1 < args_number)
                 {
-                    ++i;
-                    crosswordPath = std::move(args[i]);
-                    continue;
+                    crosswordPath = std::move(args[++i]);
                 }
-
-                std::cerr << "No crossword file specified!\n";
-                return EXIT_FAILURE;
-            }
-
-            if (option == "--words-file")
-            {
-                if (i + 1 < args_number)
+                else
                 {
-                    ++i;
-                    wordsPath = std::move(args[i]);
-                    continue;
+                    std::cerr << "No crossword file specified!\n";
+                    return EXIT_FAILURE;
                 }
-
-                std::cerr << "No words file specified!\n";
-                return EXIT_FAILURE;
             }
-
-            if (option == "--highlight-color")
+            else if (option == "--words-file")
             {
                 if (i + 1 < args_number)
                 {
-                    ++i;
-
+                    wordsPath = std::move(args[++i]);
+                }
+                else
+                {
+                    std::cerr << "No words file specified!\n";
+                    return EXIT_FAILURE;
+                }
+            }
+            else if (option == "--highlight-color")
+            {
+                if (i + 1 < args_number)
+                {
                     try
                     {
-                        highlightColorCode = std::stoi(args[i]);
+                        highlightColorCode = std::stoi(args[++i]);
+
+                        bool const validColor = (highlightColorCode >= 30 && highlightColorCode <= 37) ||
+                                                (highlightColorCode >= 90 && highlightColorCode <= 97);
+
+                        if (!validColor)
+                        {
+                            throw std::invalid_argument("Color code out of range");
+                        }
                     }
                     catch (const std::exception &)
-                    {
-                        std::cerr << "Not a valid integer!\n";
-                        return EXIT_FAILURE;
-                    }
-
-                    bool const validColor = (highlightColorCode >= 30 && highlightColorCode <= 37) ||
-                                            (highlightColorCode >= 90 && highlightColorCode <= 97);
-
-                    if (!validColor)
                     {
                         std::cerr << "Invalid ANSI color code!\n";
                         return EXIT_FAILURE;
                     }
-
-                    continue;
                 }
-
-                std::cerr << "No color code specified!\n";
-                return EXIT_FAILURE;
+                else
+                {
+                    std::cerr << "No color code specified!\n";
+                    return EXIT_FAILURE;
+                }
             }
-
-            bool const invalidOption = (option != "--help" && option != "-h" && option != "-?");
-
-            if (invalidOption)
+            else if (option == "--help" || option == "-h" || option == "-?")
+            {
+                print_usage();
+                return EXIT_SUCCESS;
+            }
+            else
             {
                 std::cerr << "Invalid argument or option!\n\n";
-            }
-
-            std::cout << "Usage:\t" << args[0]
-                      << " [crossword-file word-list-file]\n"
-                         "\t-i, --ignore-case\tcase insensitive search\n"
-                         "\t--crossword-file FILE\tpath of crossword file\n"
-                         "\t--words-file FILE\tpath of words file\n"
-                         "\t--highlight-color CODE\tANSI code of highlight color (30-37 or 90-97)\n"
-                         "\t--help\t\t\tshow help\n";
-
-            if (invalidOption)
-            {
+                print_usage();
                 return EXIT_FAILURE;
             }
-
-            return EXIT_SUCCESS;
         }
     }
 
