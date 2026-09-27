@@ -236,8 +236,6 @@ int main(int argc, char *argv[])
 
     line.reserve(std::max(height, maxLength));
 
-    std::vector<std::string> *crossword;
-
     if (ignoreCase)
     {
         crosswordLowered = inputCrossword;
@@ -246,22 +244,18 @@ int main(int argc, char *argv[])
         {
             std::transform(row.begin(), row.end(), row.begin(), [&ctype](char c) { return ctype.tolower(c); });
         }
-
-        crossword = &crosswordLowered;
-    }
-    else
-    {
-        crossword = &inputCrossword;
     }
 
-    for (auto &row : (*crossword))
+    std::vector<std::string> &crossword = ignoreCase ? crosswordLowered : inputCrossword;
+
+    for (auto &row : crossword)
     {
         row.resize(maxLength);
     }
 
     for (size_t i{height}; i--;)
     {
-        std::string_view const lineView((*crossword)[i]);
+        std::string_view const lineView(crossword[i]);
 
         for (const auto &word : words)
         {
@@ -282,7 +276,7 @@ int main(int argc, char *argv[])
         line.clear();
 
         for (size_t j{0}; j < height; ++j)
-            line.push_back((*crossword)[j][i]);
+            line.push_back(crossword[j][i]);
 
         std::string_view const lineView(line);
 
@@ -305,7 +299,7 @@ int main(int argc, char *argv[])
         line.clear();
 
         for (size_t j = i, k{0}; j < maxLength && k < height; ++j, ++k)
-            line.push_back((*crossword)[k][j]);
+            line.push_back(crossword[k][j]);
 
         std::string_view const lineView(line);
 
@@ -328,7 +322,7 @@ int main(int argc, char *argv[])
         line.clear();
 
         for (size_t k = i, j{0}; j < maxLength && k < height; ++j, ++k)
-            line.push_back((*crossword)[k][j]);
+            line.push_back(crossword[k][j]);
 
         std::string_view const lineView(line);
 
@@ -351,7 +345,7 @@ int main(int argc, char *argv[])
         line.clear();
 
         for (size_t j = i, k{0}; j && (k < maxLength); ++k)
-            line.push_back((*crossword)[--j][k]);
+            line.push_back(crossword[--j][k]);
 
         std::string_view const lineView(line);
 
@@ -374,7 +368,7 @@ int main(int argc, char *argv[])
         line.clear();
 
         for (size_t j = i, k{height}; k && (j < maxLength); ++j)
-            line.push_back((*crossword)[--k][j]);
+            line.push_back(crossword[--k][j]);
 
         std::string_view const lineView(line);
 
