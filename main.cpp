@@ -89,16 +89,17 @@ int main(int argc, char *argv[])
                     try
                     {
                         highlightColorCode = std::stoi(args[++i]);
-
-                        bool const validColor = (highlightColorCode >= 30 && highlightColorCode <= 37) ||
-                                                (highlightColorCode >= 90 && highlightColorCode <= 97);
-
-                        if (!validColor)
-                        {
-                            throw std::invalid_argument("Color code out of range");
-                        }
                     }
                     catch (const std::exception &)
+                    {
+                        std::cerr << "Not a valid integer!\n";
+                        return EXIT_FAILURE;
+                    }
+
+                    bool const validColor = (highlightColorCode >= 30 && highlightColorCode <= 37) ||
+                                            (highlightColorCode >= 90 && highlightColorCode <= 97);
+
+                    if (!validColor)
                     {
                         std::cerr << "Invalid ANSI color code!\n";
                         return EXIT_FAILURE;
