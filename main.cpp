@@ -390,7 +390,16 @@ int main(int argc, char *argv[])
     for (size_t i{0}; i < height; ++i)
     {
         for (size_t j{0}; j < inputCrossword[i].size(); ++j)
-            std::cout << " \x1b[" << (highlights[i][j] ? highlightColorCode : 0) << "m" << inputCrossword[i][j];
+        {
+            if (highlights[i][j])
+            {
+                std::cout << " \x1b[1;" << highlightColorCode << "m" << inputCrossword[i][j];
+            }
+            else
+            {
+                std::cout << " \x1b[0m" << inputCrossword[i][j];
+            }
+        }
 
         std::cout.put('\n');
     }
