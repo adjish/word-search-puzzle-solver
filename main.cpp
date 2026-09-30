@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <charconv>
 #include <fstream>
 #include <iostream>
 #include <locale>
@@ -86,11 +87,11 @@ int main(int argc, char *argv[])
             {
                 if (i + 1 < args_number)
                 {
-                    try
-                    {
-                        highlightColorCode = std::stoi(args[++i]);
-                    }
-                    catch (const std::exception &)
+                    std::string const &value = args[++i];
+                    auto const [end, ec] =
+                        std::from_chars(value.data(), value.data() + value.size(), highlightColorCode);
+
+                    if (ec != std::errc{} || end != value.data() + value.size())
                     {
                         std::cerr << "Not a valid integer!\n";
                         return EXIT_FAILURE;
