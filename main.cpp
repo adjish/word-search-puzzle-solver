@@ -4,6 +4,7 @@
 #include <iostream>
 #include <locale>
 #include <stdexcept>
+#include <string_view>
 #include <unordered_set>
 #include <vector>
 
@@ -16,7 +17,7 @@ int main(int argc, char *argv[])
 
     std::string crosswordPath, wordsPath;
     std::unordered_set<std::string> words_input;
-    std::vector<std::string> inputCrossword, crosswordLowered, args{argv, argv + argc};
+    std::vector<std::string> inputCrossword, crosswordLowered;
     std::locale loc;
 
     try
@@ -32,8 +33,8 @@ int main(int argc, char *argv[])
 
     std::ios_base::sync_with_stdio(false);
 
-    auto print_usage = [&args]() {
-        std::cout << "Usage:\t" << args[0]
+    auto print_usage = [argv]() {
+        std::cout << "Usage:\t" << argv[0]
                   << " [crossword-file word-list-file]\n"
                      "\t-i, --ignore-case\tcase insensitive search\n"
                      "\t--crossword-file FILE\tpath of crossword file\n"
@@ -42,10 +43,13 @@ int main(int argc, char *argv[])
                      "\t--help\t\t\tshow help\n";
     };
 
-    if (argc == 3 && !args[1].empty() && args[1].front() != '-' && !args[2].empty() && args[2].front() != '-')
+    std::string_view const arg1 = argc > 1 ? argv[1] : "";
+    std::string_view const arg2 = argc > 2 ? argv[2] : "";
+
+    if (argc == 3 && !arg1.empty() && arg1.front() != '-' && !arg2.empty() && arg2.front() != '-')
     {
-        crosswordPath = std::move(args[1]);
-        wordsPath = std::move(args[2]);
+        crosswordPath = arg1;
+        wordsPath = arg2;
     }
     else
     {
@@ -53,7 +57,7 @@ int main(int argc, char *argv[])
 
         for (size_t i = 1; i < args_number; ++i)
         {
-            std::string_view const option{args[i]};
+            std::string_view const option{argv[i]};
 
             if (option == "--ignore-case" || option == "-i")
             {
@@ -63,7 +67,7 @@ int main(int argc, char *argv[])
             {
                 if (i + 1 < args_number)
                 {
-                    crosswordPath = std::move(args[++i]);
+                    crosswordPath = argv[++i];
                 }
                 else
                 {
@@ -75,7 +79,7 @@ int main(int argc, char *argv[])
             {
                 if (i + 1 < args_number)
                 {
-                    wordsPath = std::move(args[++i]);
+                    wordsPath = argv[++i];
                 }
                 else
                 {
@@ -87,7 +91,7 @@ int main(int argc, char *argv[])
             {
                 if (i + 1 < args_number)
                 {
-                    std::string const &value = args[++i];
+                    std::string_view const value{argv[++i]};
                     auto const [end, ec] =
                         std::from_chars(value.data(), value.data() + value.size(), highlightColorCode);
 
