@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     int highlightColorCode{DEFAULT_HIGHLIGHT_COLOR_CODE};
 
     std::string crosswordPath, wordsPath;
-    std::unordered_set<std::string> words_input;
+    std::unordered_set<std::string> wordsInput;
     std::vector<std::string> inputCrossword, crosswordLowered;
     std::locale loc;
 
@@ -177,11 +177,11 @@ int main(int argc, char *argv[])
                 std::transform(line.begin(), line.end(), line.begin(), [&ctype](char c) { return ctype.tolower(c); });
             }
 
-            words_input.insert(line);
-            words_input.insert(std::string(line.rbegin(), line.rend()));
+            wordsInput.insert(line);
+            wordsInput.insert(std::string(line.rbegin(), line.rend()));
         }
 
-        if (words_input.empty())
+        if (wordsInput.empty())
         {
             std::cerr << " Word list empty.\n";
             return EXIT_FAILURE;
@@ -221,13 +221,13 @@ int main(int argc, char *argv[])
                 std::transform(line.begin(), line.end(), line.begin(), [&ctype](char c) { return ctype.tolower(c); });
             }
 
-            words_input.insert(line);
-            words_input.insert(std::string(line.rbegin(), line.rend()));
+            wordsInput.insert(line);
+            wordsInput.insert(std::string(line.rbegin(), line.rend()));
 
             std::cout.put(' ');
         }
 
-        if (words_input.empty())
+        if (wordsInput.empty())
         {
             std::cerr << (std::cin.eof() ? "End of input reached: exit.\n\n" : " Word list empty.\n\n");
 
@@ -237,8 +237,15 @@ int main(int argc, char *argv[])
 
     const size_t height = inputCrossword.size();
 
+    std::vector<size_t> rowLength(height);
+
+    for (size_t i{0}; i < height; ++i)
+    {
+        rowLength[i] = inputCrossword[i].size();
+    }
+
     std::vector<std::vector<bool>> highlights(height, std::vector<bool>(maxLength));
-    std::vector<std::string> words(words_input.begin(), words_input.end());
+    std::vector<std::string> words(wordsInput.begin(), wordsInput.end());
 
     line.reserve(std::max(height, maxLength));
 
@@ -394,7 +401,7 @@ int main(int argc, char *argv[])
 
     for (size_t i{0}; i < height; ++i)
     {
-        for (size_t j{0}; j < inputCrossword[i].size(); ++j)
+        for (size_t j{0}; j < rowLength[i]; ++j)
         {
             if (highlights[i][j])
             {
