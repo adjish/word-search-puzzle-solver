@@ -159,6 +159,11 @@ int main(int argc, char *argv[])
 
         while (std::getline(crosswordFile, line))
         {
+            if (!line.empty() && line.back() == '\r')
+            {
+                line.pop_back();
+            }
+
             inputCrossword.push_back(line);
 
             maxLength = std::max(maxLength, line.length());
@@ -172,6 +177,16 @@ int main(int argc, char *argv[])
 
         while (std::getline(wordsFile, line))
         {
+            if (!line.empty() && line.back() == '\r')
+            {
+                line.pop_back();
+            }
+
+            if (line.empty())
+            {
+                continue;
+            }
+
             if (ignoreCase)
             {
                 std::transform(line.begin(), line.end(), line.begin(), [&ctype](char c) { return ctype.tolower(c); });
@@ -191,8 +206,18 @@ int main(int argc, char *argv[])
     {
         std::cout << "\n Enter your crossword:\n\n ";
 
-        while (std::getline(std::cin, line) && !line.empty())
+        while (std::getline(std::cin, line))
         {
+            if (!line.empty() && line.back() == '\r')
+            {
+                line.pop_back();
+            }
+
+            if (line.empty())
+            {
+                break;
+            }
+
             maxLength = std::max(maxLength, line.length());
 
             inputCrossword.push_back(line);
@@ -214,8 +239,18 @@ int main(int argc, char *argv[])
 
         std::cout << " Enter the words to search in the crossword:\n\n ";
 
-        while (std::getline(std::cin, line) && !line.empty())
+        while (std::getline(std::cin, line))
         {
+            if (!line.empty() && line.back() == '\r')
+            {
+                line.pop_back();
+            }
+
+            if (line.empty())
+            {
+                break;
+            }
+
             if (ignoreCase)
             {
                 std::transform(line.begin(), line.end(), line.begin(), [&ctype](char c) { return ctype.tolower(c); });
