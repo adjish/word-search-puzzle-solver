@@ -43,101 +43,106 @@ int main(int argc, char *argv[])
                      "\t--help\t\t\tshow help\n";
     };
 
-    std::string_view const arg1 = argc > 1 ? argv[1] : "";
-    std::string_view const arg2 = argc > 2 ? argv[2] : "";
+    auto args_number = static_cast<size_t>(argc);
 
-    if (argc == 3 && !arg1.empty() && arg1.front() != '-' && !arg2.empty() && arg2.front() != '-')
+    for (size_t i = 1; i < args_number; ++i)
     {
-        crosswordPath = arg1;
-        wordsPath = arg2;
-    }
-    else
-    {
-        auto args_number = static_cast<size_t>(argc);
+        std::string_view const option{argv[i]};
 
-        for (size_t i = 1; i < args_number; ++i)
+        if (option == "--ignore-case" || option == "-i")
         {
-            std::string_view const option{argv[i]};
-
-            if (option == "--ignore-case" || option == "-i")
+            ignoreCase = true;
+        }
+        else if (option == "--crossword-file")
+        {
+            if (++i < args_number)
             {
-                ignoreCase = true;
-            }
-            else if (option == "--crossword-file")
-            {
-                if (i + 1 < args_number)
-                {
-                    crosswordPath = argv[++i];
-                }
-                else
-                {
-                    std::cerr << "No crossword file specified!\n";
-                    return EXIT_FAILURE;
-                }
-            }
-            else if (option == "--words-file")
-            {
-                if (i + 1 < args_number)
-                {
-                    wordsPath = argv[++i];
-                }
-                else
-                {
-                    std::cerr << "No words file specified!\n";
-                    return EXIT_FAILURE;
-                }
-            }
-            else if (option == "--highlight-color")
-            {
-                if (i + 1 < args_number)
-                {
-                    std::string_view const value{argv[++i]};
-                    auto const [end, ec] =
-                        std::from_chars(value.data(), value.data() + value.size(), highlightColorCode);
-
-                    if (ec != std::errc{} || end != value.data() + value.size())
-                    {
-                        std::cerr << "Not a valid integer!\n";
-                        return EXIT_FAILURE;
-                    }
-
-                    bool const validColor = (highlightColorCode >= 30 && highlightColorCode <= 37) ||
-                                            (highlightColorCode >= 90 && highlightColorCode <= 97);
-
-                    if (!validColor)
-                    {
-                        std::cerr << "Invalid ANSI color code!\n";
-                        return EXIT_FAILURE;
-                    }
-                }
-                else
-                {
-                    std::cerr << "No color code specified!\n";
-                    return EXIT_FAILURE;
-                }
-            }
-            else if (option == "--help" || option == "-h" || option == "-?")
-            {
-                print_usage();
-                return EXIT_SUCCESS;
+                crosswordPath = argv[i];
             }
             else
             {
-                std::cerr << "Invalid argument or option!\n\n";
+                std::cerr << "No crossword file specified!\n";
+                return EXIT_FAILURE;
+            }
+        }
+        else if (option == "--words-file")
+        {
+            if (++i < args_number)
+            {
+                wordsPath = argv[i];
+            }
+            else
+            {
+                std::cerr << "No words file specified!\n";
+                return EXIT_FAILURE;
+            }
+        }
+        else if (option == "--highlight-color")
+        {
+            if (++i < args_number)
+            {
+                std::string_view const value{argv[i]};
+                auto const [end, ec] = std::from_chars(value.data(), value.data() + value.size(), highlightColorCode);
+
+                if (ec != std::errc{} || end != value.data() + value.size())
+                {
+                    std::cerr << "Not a valid integer!\n";
+                    return EXIT_FAILURE;
+                }
+
+                bool const validColor = (highlightColorCode >= 30 && highlightColorCode <= 37) ||
+                                        (highlightColorCode >= 90 && highlightColorCode <= 97);
+
+                if (!validColor)
+                {
+                    std::cerr << "Invalid ANSI color code!\n";
+                    return EXIT_FAILURE;
+                }
+            }
+            else
+            {
+                std::cerr << "No color code specified!\n";
+                return EXIT_FAILURE;
+            }
+        }
+        else if (option == "--help" || option == "-h" || option == "-?")
+        {
+            print_usage();
+            return EXIT_SUCCESS;
+        }
+        else if (!option.empty() && option.front() != '-')
+        {
+            if (crosswordPath.empty())
+            {
+                crosswordPath = option;
+            }
+            else if (wordsPath.empty())
+            {
+                wordsPath = option;
+            }
+            else
+            {
+                std::cerr << "Too many positional arguments specified!\n\n";
                 print_usage();
                 return EXIT_FAILURE;
             }
         }
+        else
+        {
+            std::cerr << "Invalid argument or option!\n\n";
+            print_usage();
+            return EXIT_FAILURE;
+        }
     }
-
-    size_t maxLength{1};
-    bool const inputFromFiles = !crosswordPath.empty() && !wordsPath.empty();
 
     if (crosswordPath.empty() != wordsPath.empty())
     {
         std::cerr << "Both files must be specified.\n";
         return EXIT_FAILURE;
     }
+
+    size_t maxLength{1};
+    bool const inputFromFiles = !crosswordPath.empty() && !wordsPath.empty();
 
     std::string line;
 
@@ -296,10 +301,7 @@ int main(int argc, char *argv[])
         row.resize(maxLength);
     }
 
-    for (size_t i{height}; i--;)
-    {
-        std::string_view const lineView(crossword[i]);
-
+    auto search_and_highlight = [&](std::string_view lineView, auto mark_highlight) {
         for (const auto &word : words)
         {
             size_t position = 0;
@@ -307,11 +309,20 @@ int main(int argc, char *argv[])
             while ((position = lineView.find(word, position)) != std::string_view::npos)
             {
                 for (size_t j{0}; j < word.length(); ++j)
-                    highlights[i][position + j] = true;
+                {
+                    mark_highlight(position + j);
+                }
 
                 position++;
             }
         }
+    };
+
+    for (size_t i{height}; i--;)
+    {
+        std::string_view const lineView(crossword[i]);
+
+        search_and_highlight(lineView, [&](size_t idx) { highlights[i][idx] = true; });
     }
 
     for (size_t i{0}; i < maxLength; ++i)
@@ -319,22 +330,13 @@ int main(int argc, char *argv[])
         line.clear();
 
         for (size_t j{0}; j < height; ++j)
+        {
             line.push_back(crossword[j][i]);
+        }
 
         std::string_view const lineView(line);
 
-        for (const auto &word : words)
-        {
-            size_t position = 0;
-
-            while ((position = lineView.find(word, position)) != std::string_view::npos)
-            {
-                for (size_t j{0}; j < word.length(); ++j)
-                    highlights[position + j][i] = true;
-
-                position++;
-            }
-        }
+        search_and_highlight(lineView, [&](size_t idx) { highlights[idx][i] = true; });
     }
 
     for (size_t i{0}; i < maxLength; ++i)
@@ -342,22 +344,13 @@ int main(int argc, char *argv[])
         line.clear();
 
         for (size_t j = i, k{0}; j < maxLength && k < height; ++j, ++k)
+        {
             line.push_back(crossword[k][j]);
+        }
 
         std::string_view const lineView(line);
 
-        for (const auto &word : words)
-        {
-            size_t position = 0;
-
-            while ((position = lineView.find(word, position)) != std::string_view::npos)
-            {
-                for (size_t j{0}; j < word.length(); ++j)
-                    highlights[position + j][position + j + i] = true;
-
-                position++;
-            }
-        }
+        search_and_highlight(lineView, [&](size_t idx) { highlights[idx][idx + i] = true; });
     }
 
     for (size_t i{1}; i < height; ++i)
@@ -365,22 +358,13 @@ int main(int argc, char *argv[])
         line.clear();
 
         for (size_t k = i, j{0}; j < maxLength && k < height; ++j, ++k)
+        {
             line.push_back(crossword[k][j]);
+        }
 
         std::string_view const lineView(line);
 
-        for (const auto &word : words)
-        {
-            size_t position = 0;
-
-            while ((position = lineView.find(word, position)) != std::string_view::npos)
-            {
-                for (size_t j{0}; j < word.length(); ++j)
-                    highlights[i + position + j][position + j] = true;
-
-                position++;
-            }
-        }
+        search_and_highlight(lineView, [&](size_t idx) { highlights[i + idx][idx] = true; });
     }
 
     for (size_t i{1}; i <= height; ++i)
@@ -388,45 +372,27 @@ int main(int argc, char *argv[])
         line.clear();
 
         for (size_t j = i, k{0}; j && (k < maxLength); ++k)
+        {
             line.push_back(crossword[--j][k]);
+        }
 
         std::string_view const lineView(line);
 
-        for (const auto &word : words)
-        {
-            size_t position = 0;
-
-            while ((position = lineView.find(word, position)) != std::string_view::npos)
-            {
-                for (size_t j{0}; j < word.length(); ++j)
-                    highlights[i - position - j - 1][position + j] = true;
-
-                position++;
-            }
-        }
+        search_and_highlight(lineView, [&](size_t idx) { highlights[i - idx - 1][idx] = true; });
     }
 
-    for (size_t i{1}; i <= maxLength; ++i)
+    for (size_t i{1}; i < maxLength; ++i)
     {
         line.clear();
 
         for (size_t j = i, k{height}; k && (j < maxLength); ++j)
+        {
             line.push_back(crossword[--k][j]);
+        }
 
         std::string_view const lineView(line);
 
-        for (const auto &word : words)
-        {
-            size_t position = 0;
-
-            while ((position = lineView.find(word, position)) != std::string_view::npos)
-            {
-                for (size_t j{0}; j < word.length(); ++j)
-                    highlights[height - position - j - 1][position + j + i] = true;
-
-                position++;
-            }
-        }
+        search_and_highlight(lineView, [&](size_t idx) { highlights[height - idx - 1][idx + i] = true; });
     }
 
     for (size_t i{0}; i < height; ++i)
