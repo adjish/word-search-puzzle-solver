@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <charconv>
+#include <cstdint>
 #include <fstream>
 #include <iostream>
 #include <locale>
@@ -279,7 +280,7 @@ int main(int argc, char *argv[])
         rowLength[i] = inputCrossword[i].size();
     }
 
-    std::vector<std::vector<bool>> highlights(height, std::vector<bool>(maxLength));
+    std::vector<std::vector<std::uint8_t>> highlights(height, std::vector<std::uint8_t>(maxLength, 0));
     std::vector<std::string> words(wordsInput.begin(), wordsInput.end());
 
     line.reserve(std::max(height, maxLength));
