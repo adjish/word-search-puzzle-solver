@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
                      "\t--help\t\t\tshow help\n";
     };
 
-    auto args_number = static_cast<size_t>(argc);
+    const auto args_number = static_cast<size_t>(argc);
 
     for (size_t i = 1; i < args_number; ++i)
     {
