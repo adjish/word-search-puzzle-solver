@@ -19,22 +19,23 @@ int main(int argc, char *argv[])
     std::string crosswordPath, wordsPath;
     std::unordered_set<std::string> wordsInput;
     std::vector<std::string> inputCrossword, crosswordLowered;
-    std::locale loc;
 
-    try
-    {
-        loc = std::locale("");
-    }
-    catch (const std::runtime_error &)
-    {
-        loc = std::locale::classic();
-    }
+    const std::locale loc = []() {
+        try
+        {
+            return std::locale("");
+        }
+        catch (const std::runtime_error &)
+        {
+            return std::locale::classic();
+        }
+    }();
 
     auto const &ctype = std::use_facet<std::ctype<char>>(loc);
 
     std::ios_base::sync_with_stdio(false);
 
-    auto print_usage = [argv]() {
+    const auto print_usage = [argv]() {
         std::cout << "Usage:\t" << argv[0]
                   << " [crossword-file word-list-file]\n"
                      "\t-i, --ignore-case\tcase insensitive search\n"
@@ -147,7 +148,7 @@ int main(int argc, char *argv[])
 
     std::string line;
 
-    auto read_line = [](std::istream &is, std::string &str) -> std::istream & {
+    const auto read_line = [](std::istream &is, std::string &str) -> std::istream & {
         auto &ret = std::getline(is, str);
 
         if (!str.empty() && str.back() == '\r')
@@ -158,8 +159,8 @@ int main(int argc, char *argv[])
         return ret;
     };
 
-    auto to_lower = [&ctype](std::string &str) {
-        std::transform(str.begin(), str.end(), str.begin(), [&ctype](char c) { return ctype.tolower(c); });
+    const auto to_lower = [&ctype](std::string &str) {
+        std::transform(str.begin(), str.end(), str.begin(), [&ctype](const char c) { return ctype.tolower(c); });
     };
 
     if (inputFromFiles)
@@ -273,15 +274,17 @@ int main(int argc, char *argv[])
 
     const size_t height = inputCrossword.size();
 
-    std::vector<size_t> rowLength(height);
-
-    for (size_t i{0}; i < height; ++i)
-    {
-        rowLength[i] = inputCrossword[i].size();
-    }
+    const std::vector<size_t> rowLength = [&]() {
+        std::vector<size_t> lengths(height);
+        for (size_t i{0}; i < height; ++i)
+        {
+            lengths[i] = inputCrossword[i].size();
+        }
+        return lengths;
+    }();
 
     std::vector<std::vector<std::uint8_t>> highlights(height, std::vector<std::uint8_t>(maxLength, 0));
-    std::vector<std::string> words(wordsInput.begin(), wordsInput.end());
+    const std::vector<std::string> words(wordsInput.begin(), wordsInput.end());
 
     line.reserve(std::max(height, maxLength));
 
@@ -302,7 +305,9 @@ int main(int argc, char *argv[])
         row.resize(maxLength);
     }
 
-    auto search_and_highlight = [&](std::string_view lineView, auto mark_highlight) {
+    const auto &constCrossword = crossword;
+
+    const auto search_and_highlight = [&](std::string_view const lineView, auto mark_highlight) {
         for (const auto &word : words)
         {
             size_t position = 0;
@@ -321,9 +326,9 @@ int main(int argc, char *argv[])
 
     for (size_t i{height}; i--;)
     {
-        std::string_view const lineView(crossword[i]);
+        std::string_view const lineView(constCrossword[i]);
 
-        search_and_highlight(lineView, [&](size_t idx) { highlights[i][idx] = true; });
+        search_and_highlight(lineView, [&](const size_t idx) { highlights[i][idx] = true; });
     }
 
     for (size_t i{0}; i < maxLength; ++i)
@@ -332,12 +337,12 @@ int main(int argc, char *argv[])
 
         for (size_t j{0}; j < height; ++j)
         {
-            line.push_back(crossword[j][i]);
+            line.push_back(constCrossword[j][i]);
         }
 
         std::string_view const lineView(line);
 
-        search_and_highlight(lineView, [&](size_t idx) { highlights[idx][i] = true; });
+        search_and_highlight(lineView, [&](const size_t idx) { highlights[idx][i] = true; });
     }
 
     for (size_t i{0}; i < maxLength; ++i)
@@ -346,12 +351,12 @@ int main(int argc, char *argv[])
 
         for (size_t j = i, k{0}; j < maxLength && k < height; ++j, ++k)
         {
-            line.push_back(crossword[k][j]);
+            line.push_back(constCrossword[k][j]);
         }
 
         std::string_view const lineView(line);
 
-        search_and_highlight(lineView, [&](size_t idx) { highlights[idx][idx + i] = true; });
+        search_and_highlight(lineView, [&](const size_t idx) { highlights[idx][idx + i] = true; });
     }
 
     for (size_t i{1}; i < height; ++i)
@@ -360,12 +365,12 @@ int main(int argc, char *argv[])
 
         for (size_t k = i, j{0}; j < maxLength && k < height; ++j, ++k)
         {
-            line.push_back(crossword[k][j]);
+            line.push_back(constCrossword[k][j]);
         }
 
         std::string_view const lineView(line);
 
-        search_and_highlight(lineView, [&](size_t idx) { highlights[i + idx][idx] = true; });
+        search_and_highlight(lineView, [&](const size_t idx) { highlights[i + idx][idx] = true; });
     }
 
     for (size_t i{1}; i <= height; ++i)
@@ -374,12 +379,12 @@ int main(int argc, char *argv[])
 
         for (size_t j = i, k{0}; j && (k < maxLength); ++k)
         {
-            line.push_back(crossword[--j][k]);
+            line.push_back(constCrossword[--j][k]);
         }
 
         std::string_view const lineView(line);
 
-        search_and_highlight(lineView, [&](size_t idx) { highlights[i - idx - 1][idx] = true; });
+        search_and_highlight(lineView, [&](const size_t idx) { highlights[i - idx - 1][idx] = true; });
     }
 
     for (size_t i{1}; i < maxLength; ++i)
@@ -388,12 +393,12 @@ int main(int argc, char *argv[])
 
         for (size_t j = i, k{height}; k && (j < maxLength); ++j)
         {
-            line.push_back(crossword[--k][j]);
+            line.push_back(constCrossword[--k][j]);
         }
 
         std::string_view const lineView(line);
 
-        search_and_highlight(lineView, [&](size_t idx) { highlights[height - idx - 1][idx + i] = true; });
+        search_and_highlight(lineView, [&](const size_t idx) { highlights[height - idx - 1][idx + i] = true; });
     }
 
     for (size_t i{0}; i < height; ++i)
