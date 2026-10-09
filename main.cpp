@@ -328,7 +328,7 @@ int main(int argc, char *argv[])
     {
         std::string_view const lineView(constCrossword[i]);
 
-        search_and_highlight(lineView, [&](const size_t idx) { highlights[i][idx] = true; });
+        search_and_highlight(lineView, [&](const size_t idx) { highlights[i][idx] = 1; });
     }
 
     for (size_t i{0}; i < maxLength; ++i)
@@ -342,7 +342,7 @@ int main(int argc, char *argv[])
 
         std::string_view const lineView(line);
 
-        search_and_highlight(lineView, [&](const size_t idx) { highlights[idx][i] = true; });
+        search_and_highlight(lineView, [&](const size_t idx) { highlights[idx][i] = 1; });
     }
 
     for (size_t i{0}; i < maxLength; ++i)
@@ -356,7 +356,7 @@ int main(int argc, char *argv[])
 
         std::string_view const lineView(line);
 
-        search_and_highlight(lineView, [&](const size_t idx) { highlights[idx][idx + i] = true; });
+        search_and_highlight(lineView, [&](const size_t idx) { highlights[idx][idx + i] = 1; });
     }
 
     for (size_t i{1}; i < height; ++i)
@@ -370,7 +370,7 @@ int main(int argc, char *argv[])
 
         std::string_view const lineView(line);
 
-        search_and_highlight(lineView, [&](const size_t idx) { highlights[i + idx][idx] = true; });
+        search_and_highlight(lineView, [&](const size_t idx) { highlights[i + idx][idx] = 1; });
     }
 
     for (size_t i{1}; i <= height; ++i)
@@ -384,7 +384,7 @@ int main(int argc, char *argv[])
 
         std::string_view const lineView(line);
 
-        search_and_highlight(lineView, [&](const size_t idx) { highlights[i - idx - 1][idx] = true; });
+        search_and_highlight(lineView, [&](const size_t idx) { highlights[i - idx - 1][idx] = 1; });
     }
 
     for (size_t i{1}; i < maxLength; ++i)
@@ -398,7 +398,7 @@ int main(int argc, char *argv[])
 
         std::string_view const lineView(line);
 
-        search_and_highlight(lineView, [&](const size_t idx) { highlights[height - idx - 1][idx + i] = true; });
+        search_and_highlight(lineView, [&](const size_t idx) { highlights[height - idx - 1][idx + i] = 1; });
     }
 
     for (size_t i{0}; i < height; ++i)
