@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    size_t maxLength{1};
+    size_t width{1};
     bool const inputFromFiles = !crosswordPath.empty() && !wordsPath.empty();
 
     std::string line;
@@ -160,12 +160,15 @@ int main(int argc, char *argv[])
     };
 
     const auto to_lower = [&ctype](std::string &str) {
-        std::transform(str.begin(), str.end(), str.begin(), [&ctype](const char c) { return ctype.tolower(c); });
+        for (char &c : str)
+        {
+            c = ctype.tolower(c);
+        }
     };
 
     if (inputFromFiles)
     {
-        std::ifstream crosswordFile(crosswordPath), wordsFile(wordsPath);
+        std::ifstream crosswordFile{crosswordPath}, wordsFile{wordsPath};
 
         if (!crosswordFile)
         {
@@ -183,7 +186,7 @@ int main(int argc, char *argv[])
         {
             inputCrossword.push_back(line);
 
-            maxLength = std::max(maxLength, line.length());
+            width = std::max(width, line.length());
         }
 
         if (inputCrossword.empty())
@@ -225,7 +228,7 @@ int main(int argc, char *argv[])
                 break;
             }
 
-            maxLength = std::max(maxLength, line.length());
+            width = std::max(width, line.length());
 
             inputCrossword.push_back(line);
 
@@ -283,10 +286,10 @@ int main(int argc, char *argv[])
         return lengths;
     }();
 
-    std::vector<std::vector<std::uint8_t>> highlights(height, std::vector<std::uint8_t>(maxLength, 0));
+    std::vector<std::vector<std::uint8_t>> highlights(height, std::vector<std::uint8_t>(width, 0));
     const std::vector<std::string> words(wordsInput.begin(), wordsInput.end());
 
-    line.reserve(std::max(height, maxLength));
+    line.reserve(std::max(height, width));
 
     if (ignoreCase)
     {
@@ -302,7 +305,7 @@ int main(int argc, char *argv[])
 
     for (auto &row : crossword)
     {
-        row.resize(maxLength);
+        row.resize(width);
     }
 
     const auto &constCrossword = crossword;
@@ -326,12 +329,12 @@ int main(int argc, char *argv[])
 
     for (size_t i{height}; i--;)
     {
-        std::string_view const lineView(constCrossword[i]);
+        std::string_view const lineView{constCrossword[i]};
 
         search_and_highlight(lineView, [&](const size_t idx) { highlights[i][idx] = 1; });
     }
 
-    for (size_t i{0}; i < maxLength; ++i)
+    for (size_t i{0}; i < width; ++i)
     {
         line.clear();
 
@@ -340,21 +343,21 @@ int main(int argc, char *argv[])
             line.push_back(constCrossword[j][i]);
         }
 
-        std::string_view const lineView(line);
+        std::string_view const lineView{line};
 
         search_and_highlight(lineView, [&](const size_t idx) { highlights[idx][i] = 1; });
     }
 
-    for (size_t i{0}; i < maxLength; ++i)
+    for (size_t i{0}; i < width; ++i)
     {
         line.clear();
 
-        for (size_t j = i, k{0}; j < maxLength && k < height; ++j, ++k)
+        for (size_t j = i, k{0}; j < width && k < height; ++j, ++k)
         {
             line.push_back(constCrossword[k][j]);
         }
 
-        std::string_view const lineView(line);
+        std::string_view const lineView{line};
 
         search_and_highlight(lineView, [&](const size_t idx) { highlights[idx][idx + i] = 1; });
     }
@@ -363,12 +366,12 @@ int main(int argc, char *argv[])
     {
         line.clear();
 
-        for (size_t k = i, j{0}; j < maxLength && k < height; ++j, ++k)
+        for (size_t k = i, j{0}; j < width && k < height; ++j, ++k)
         {
             line.push_back(constCrossword[k][j]);
         }
 
-        std::string_view const lineView(line);
+        std::string_view const lineView{line};
 
         search_and_highlight(lineView, [&](const size_t idx) { highlights[i + idx][idx] = 1; });
     }
@@ -377,26 +380,26 @@ int main(int argc, char *argv[])
     {
         line.clear();
 
-        for (size_t j = i, k{0}; j && (k < maxLength); ++k)
+        for (size_t j = i, k{0}; j && (k < width); ++k)
         {
             line.push_back(constCrossword[--j][k]);
         }
 
-        std::string_view const lineView(line);
+        std::string_view const lineView{line};
 
         search_and_highlight(lineView, [&](const size_t idx) { highlights[i - idx - 1][idx] = 1; });
     }
 
-    for (size_t i{1}; i < maxLength; ++i)
+    for (size_t i{1}; i < width; ++i)
     {
         line.clear();
 
-        for (size_t j = i, k{height}; k && (j < maxLength); ++j)
+        for (size_t j = i, k{height}; k && (j < width); ++j)
         {
             line.push_back(constCrossword[--k][j]);
         }
 
-        std::string_view const lineView(line);
+        std::string_view const lineView{line};
 
         search_and_highlight(lineView, [&](const size_t idx) { highlights[height - idx - 1][idx + i] = 1; });
     }
