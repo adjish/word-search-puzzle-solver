@@ -144,7 +144,6 @@ int main(int argc, char *argv[])
     }
 
     size_t width{1};
-    bool const inputFromFiles = !crosswordPath.empty() && !wordsPath.empty();
 
     std::string line;
 
@@ -165,6 +164,8 @@ int main(int argc, char *argv[])
             c = ctype.tolower(c);
         }
     };
+
+    bool const inputFromFiles = !crosswordPath.empty() && !wordsPath.empty();
 
     if (inputFromFiles)
     {
@@ -279,10 +280,12 @@ int main(int argc, char *argv[])
 
     const std::vector<size_t> rowLength = [&]() {
         std::vector<size_t> lengths(height);
+
         for (size_t i{0}; i < height; ++i)
         {
             lengths[i] = inputCrossword[i].size();
         }
+
         return lengths;
     }();
 
@@ -404,18 +407,24 @@ int main(int argc, char *argv[])
         search_and_highlight(lineView, [&](const size_t idx) { highlights[height - idx - 1][idx + i] = 1; });
     }
 
+    bool isHighlighted{false};
+
     for (size_t i{0}; i < height; ++i)
     {
         for (size_t j{0}; j < rowLength[i]; ++j)
         {
-            if (highlights[i][j])
+            if (highlights[i][j] && !isHighlighted)
             {
-                std::cout << " \x1b[1;" << highlightColorCode << "m" << inputCrossword[i][j];
+                std::cout << "\x1b[1;" << highlightColorCode << "m";
+                isHighlighted = true;
             }
-            else
+            else if (!highlights[i][j] && isHighlighted)
             {
-                std::cout << " \x1b[0m" << inputCrossword[i][j];
+                std::cout << "\x1b[0m";
+                isHighlighted = false;
             }
+
+            std::cout << ' ' << inputCrossword[i][j];
         }
 
         std::cout.put('\n');
@@ -426,5 +435,8 @@ int main(int argc, char *argv[])
         std::cout.put('\n');
     }
 
-    std::cout << "\x1b[0m";
+    if (isHighlighted)
+    {
+        std::cout << "\x1b[0m";
+    }
 }
