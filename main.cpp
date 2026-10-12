@@ -13,14 +13,8 @@ int main(int argc, char *argv[])
 {
     constexpr int DEFAULT_HIGHLIGHT_COLOR_CODE = 31;
 
-    bool ignoreCase{false};
-    int highlightColorCode{DEFAULT_HIGHLIGHT_COLOR_CODE};
-
-    std::string crosswordPath, wordsPath;
-    std::unordered_set<std::string> wordsInput;
-    std::vector<std::string> inputCrossword, crosswordLowered;
-
-    const std::locale loc = []() {
+    const std::locale loc = []()
+    {
         try
         {
             return std::locale("");
@@ -35,7 +29,8 @@ int main(int argc, char *argv[])
 
     std::ios_base::sync_with_stdio(false);
 
-    const auto print_usage = [argv]() {
+    const auto print_usage = [argv]()
+    {
         std::cout << "Usage:\t" << argv[0]
                   << " [crossword-file word-list-file]\n"
                      "\t-i, --ignore-case\tcase insensitive search\n"
@@ -45,7 +40,12 @@ int main(int argc, char *argv[])
                      "\t--help\t\t\tshow help\n";
     };
 
-    const auto args_number = static_cast<size_t>(argc);
+    bool ignoreCase{false};
+    int highlightColorCode{DEFAULT_HIGHLIGHT_COLOR_CODE};
+
+    std::string crosswordPath, wordsPath;
+
+    const size_t args_number = static_cast<size_t>(argc);
 
     for (size_t i = 1; i < args_number; ++i)
     {
@@ -143,11 +143,8 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    size_t width{1};
-
-    std::string line;
-
-    const auto read_line = [](std::istream &is, std::string &str) -> std::istream & {
+    const auto read_line = [](std::istream &is, std::string &str) -> std::istream &
+    {
         auto &ret = std::getline(is, str);
 
         if (!str.empty() && str.back() == '\r')
@@ -158,18 +155,24 @@ int main(int argc, char *argv[])
         return ret;
     };
 
-    const auto to_lower = [&ctype](std::string &str) {
+    const auto to_lower = [&ctype](std::string &str)
+    {
         for (char &c : str)
         {
             c = ctype.tolower(c);
         }
     };
 
+    size_t width{1};
+    std::string line;
+    std::vector<std::string> inputCrossword;
+    std::unordered_set<std::string> wordsInput;
     bool const inputFromFiles = !crosswordPath.empty() && !wordsPath.empty();
 
     if (inputFromFiles)
     {
-        std::ifstream crosswordFile{crosswordPath}, wordsFile{wordsPath};
+        std::ifstream crosswordFile{crosswordPath};
+        std::ifstream wordsFile{wordsPath};
 
         if (!crosswordFile)
         {
@@ -278,7 +281,8 @@ int main(int argc, char *argv[])
 
     const size_t height = inputCrossword.size();
 
-    const std::vector<size_t> rowLength = [&]() {
+    const std::vector<size_t> rowLength = [&]()
+    {
         std::vector<size_t> lengths(height);
 
         for (size_t i{0}; i < height; ++i)
@@ -293,6 +297,8 @@ int main(int argc, char *argv[])
     const std::vector<std::string> words(wordsInput.begin(), wordsInput.end());
 
     line.reserve(std::max(height, width));
+
+    std::vector<std::string> crosswordLowered;
 
     if (ignoreCase)
     {
@@ -313,7 +319,8 @@ int main(int argc, char *argv[])
 
     const auto &constCrossword = crossword;
 
-    const auto search_and_highlight = [&](std::string_view const lineView, auto mark_highlight) {
+    const auto search_and_highlight = [&](std::string_view const lineView, auto mark_highlight)
+    {
         for (const auto &word : words)
         {
             size_t position = 0;
