@@ -414,6 +414,8 @@ int main(int argc, char *argv[])
         search_and_highlight(lineView, [&](const size_t idx) { highlights[height - idx - 1][idx + i] = 1; });
     }
 
+    std::cout << "\x1b[0m";
+
     bool isHighlighted{false};
 
     for (size_t i{0}; i < height; ++i)
