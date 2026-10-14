@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 
     std::string crosswordPath, wordsPath;
 
-    const size_t args_number = static_cast<size_t>(argc);
+    const size_t args_number{static_cast<size_t>(argc)};
 
     for (size_t i = 1; i < args_number; ++i)
     {
