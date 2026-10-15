@@ -1,10 +1,12 @@
 #include <algorithm>
 #include <charconv>
 #include <cstdint>
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <locale>
 #include <stdexcept>
+#include <string>
 #include <string_view>
 #include <unordered_set>
 #include <vector>
