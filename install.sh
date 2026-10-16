@@ -9,4 +9,9 @@ fi
 
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
-sudo cmake --install build
+
+if [ "$(id -u)" -ne 0 ] && command -v sudo >/dev/null 2>&1; then
+  sudo cmake --install build
+else
+  cmake --install build
+fi
