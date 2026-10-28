@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
                      "\t--crossword-file FILE\tpath of crossword file\n"
                      "\t--words-file FILE\tpath of words file\n"
                      "\t--highlight-color CODE\tANSI code of highlight color (30-37 or 90-97)\n"
-                     "\t--help\t\t\tshow help\n";
+                     "\t-h, -?, --help\t\tshow help\n";
     };
 
     bool ignoreCase{false};
