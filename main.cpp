@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <charconv>
+#include <cstddef>
 #include <cstdint>
 #include <cstdlib>
 #include <fstream>
@@ -48,9 +49,9 @@ int main(int argc, char *argv[])
 
     std::string crosswordPath, wordsPath;
 
-    const size_t args_number{static_cast<size_t>(argc)};
+    const std::size_t args_number{static_cast<std::size_t>(argc)};
 
-    for (size_t i = 1; i < args_number; ++i)
+    for (std::size_t i = 1; i < args_number; ++i)
     {
         std::string_view const option{argv[i]};
 
@@ -166,7 +167,7 @@ int main(int argc, char *argv[])
         }
     };
 
-    size_t width{1};
+    std::size_t width{1};
     std::string line;
     std::vector<std::string> inputCrossword;
     std::unordered_set<std::string> wordsInput;
@@ -282,13 +283,13 @@ int main(int argc, char *argv[])
         }
     }
 
-    const size_t height = inputCrossword.size();
+    const std::size_t height = inputCrossword.size();
 
-    const std::vector<size_t> rowLength = [&]()
+    const std::vector<std::size_t> rowLength = [&]()
     {
-        std::vector<size_t> lengths(height);
+        std::vector<std::size_t> lengths(height);
 
-        for (size_t i{0}; i < height; ++i)
+        for (std::size_t i{0}; i < height; ++i)
         {
             lengths[i] = inputCrossword[i].size();
         }
@@ -326,11 +327,11 @@ int main(int argc, char *argv[])
     {
         for (const auto &word : words)
         {
-            size_t position = 0;
+            std::size_t position = 0;
 
             while ((position = lineView.find(word, position)) != std::string_view::npos)
             {
-                for (size_t j{0}; j < word.length(); ++j)
+                for (std::size_t j{0}; j < word.length(); ++j)
                 {
                     mark_highlight(position + j);
                 }
@@ -340,90 +341,90 @@ int main(int argc, char *argv[])
         }
     };
 
-    for (size_t i{height}; i--;)
+    for (std::size_t i{height}; i--;)
     {
         std::string_view const lineView{constCrossword[i]};
 
-        search_and_highlight(lineView, [&](const size_t idx) { highlights[i][idx] = 1; });
+        search_and_highlight(lineView, [&](const std::size_t idx) { highlights[i][idx] = 1; });
     }
 
-    for (size_t i{0}; i < width; ++i)
+    for (std::size_t i{0}; i < width; ++i)
     {
         line.clear();
 
-        for (size_t j{0}; j < height; ++j)
+        for (std::size_t j{0}; j < height; ++j)
         {
             line.push_back(constCrossword[j][i]);
         }
 
         std::string_view const lineView{line};
 
-        search_and_highlight(lineView, [&](const size_t idx) { highlights[idx][i] = 1; });
+        search_and_highlight(lineView, [&](const std::size_t idx) { highlights[idx][i] = 1; });
     }
 
-    for (size_t i{0}; i < width; ++i)
+    for (std::size_t i{0}; i < width; ++i)
     {
         line.clear();
 
-        for (size_t j = i, k{0}; j < width && k < height; ++j, ++k)
+        for (std::size_t j = i, k{0}; j < width && k < height; ++j, ++k)
         {
             line.push_back(constCrossword[k][j]);
         }
 
         std::string_view const lineView{line};
 
-        search_and_highlight(lineView, [&](const size_t idx) { highlights[idx][idx + i] = 1; });
+        search_and_highlight(lineView, [&](const std::size_t idx) { highlights[idx][idx + i] = 1; });
     }
 
-    for (size_t i{1}; i < height; ++i)
+    for (std::size_t i{1}; i < height; ++i)
     {
         line.clear();
 
-        for (size_t k = i, j{0}; j < width && k < height; ++j, ++k)
+        for (std::size_t k = i, j{0}; j < width && k < height; ++j, ++k)
         {
             line.push_back(constCrossword[k][j]);
         }
 
         std::string_view const lineView{line};
 
-        search_and_highlight(lineView, [&](const size_t idx) { highlights[i + idx][idx] = 1; });
+        search_and_highlight(lineView, [&](const std::size_t idx) { highlights[i + idx][idx] = 1; });
     }
 
-    for (size_t i{1}; i <= height; ++i)
+    for (std::size_t i{1}; i <= height; ++i)
     {
         line.clear();
 
-        for (size_t j = i, k{0}; j && (k < width); ++k)
+        for (std::size_t j = i, k{0}; j && (k < width); ++k)
         {
             line.push_back(constCrossword[--j][k]);
         }
 
         std::string_view const lineView{line};
 
-        search_and_highlight(lineView, [&](const size_t idx) { highlights[i - idx - 1][idx] = 1; });
+        search_and_highlight(lineView, [&](const std::size_t idx) { highlights[i - idx - 1][idx] = 1; });
     }
 
-    for (size_t i{1}; i < width; ++i)
+    for (std::size_t i{1}; i < width; ++i)
     {
         line.clear();
 
-        for (size_t j = i, k{height}; k && (j < width); ++j)
+        for (std::size_t j = i, k{height}; k && (j < width); ++j)
         {
             line.push_back(constCrossword[--k][j]);
         }
 
         std::string_view const lineView{line};
 
-        search_and_highlight(lineView, [&](const size_t idx) { highlights[height - idx - 1][idx + i] = 1; });
+        search_and_highlight(lineView, [&](const std::size_t idx) { highlights[height - idx - 1][idx + i] = 1; });
     }
 
     std::cout << "\x1b[0m";
 
     bool isHighlighted{false};
 
-    for (size_t i{0}; i < height; ++i)
+    for (std::size_t i{0}; i < height; ++i)
     {
-        for (size_t j{0}; j < rowLength[i]; ++j)
+        for (std::size_t j{0}; j < rowLength[i]; ++j)
         {
             if (highlights[i][j] && !isHighlighted)
             {
