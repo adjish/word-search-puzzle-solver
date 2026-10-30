@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
     std::string line;
     std::vector<std::string> inputCrossword;
     std::unordered_set<std::string> wordsInput;
-    bool const inputFromFiles = !crosswordPath.empty() && !wordsPath.empty();
+    bool const inputFromFiles = !crosswordPath.empty();
 
     if (inputFromFiles)
     {
