@@ -300,7 +300,7 @@ int main(int argc, char *argv[])
     std::vector<std::vector<std::uint8_t>> highlights(height, std::vector<std::uint8_t>(width, 0));
     const std::vector<std::string> words(wordsInput.begin(), wordsInput.end());
 
-    line.reserve(std::max(height, width));
+    line.reserve(height);
 
     std::vector<std::string> crosswordLowered;
 
