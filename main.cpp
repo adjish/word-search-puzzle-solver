@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
         }
     }();
 
-    auto const &ctype = std::use_facet<std::ctype<char>>(loc);
+    auto const &ct = std::use_facet<std::ctype<char>>(loc);
 
     std::ios_base::sync_with_stdio(false);
 
@@ -159,11 +159,11 @@ int main(int argc, char *argv[])
         return ret;
     };
 
-    const auto to_lower = [&ctype](std::string &str)
+    const auto to_lower = [&ct](std::string &str)
     {
         for (char &c : str)
         {
-            c = ctype.tolower(c);
+            c = ct.tolower(c);
         }
     };
 
