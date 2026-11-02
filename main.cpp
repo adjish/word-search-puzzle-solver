@@ -180,13 +180,13 @@ int main(int argc, char *argv[])
 
         if (!crosswordFile)
         {
-            std::cerr << " Unable to open \"" << crosswordPath << "\"!\n";
+            std::cerr << "Unable to open \"" << crosswordPath << "\"!\n";
             return EXIT_FAILURE;
         }
 
         if (!wordsFile)
         {
-            std::cerr << " Unable to open \"" << wordsPath << "\"!\n";
+            std::cerr << "Unable to open \"" << wordsPath << "\"!\n";
             return EXIT_FAILURE;
         }
 
@@ -199,7 +199,7 @@ int main(int argc, char *argv[])
 
         if (inputCrossword.empty())
         {
-            std::cerr << " Crossword empty.\n";
+            std::cerr << "Crossword empty.\n";
             return EXIT_FAILURE;
         }
 
@@ -221,7 +221,7 @@ int main(int argc, char *argv[])
 
         if (wordsInput.empty())
         {
-            std::cerr << " Word list empty.\n";
+            std::cerr << "Word list empty.\n";
             return EXIT_FAILURE;
         }
     }
@@ -245,7 +245,7 @@ int main(int argc, char *argv[])
 
         if (inputCrossword.empty())
         {
-            std::cerr << (std::cin.eof() ? "End of input reached: exit.\n\n" : " Crossword empty.\n\n");
+            std::cerr << (std::cin.eof() ? "End of input reached: exit.\n\n" : "Crossword empty.\n\n");
             return EXIT_FAILURE;
         }
 
@@ -277,7 +277,7 @@ int main(int argc, char *argv[])
 
         if (wordsInput.empty())
         {
-            std::cerr << (std::cin.eof() ? "End of input reached: exit.\n\n" : " Word list empty.\n\n");
+            std::cerr << (std::cin.eof() ? "End of input reached: exit.\n\n" : "Word list empty.\n\n");
 
             return EXIT_FAILURE;
         }
@@ -327,7 +327,7 @@ int main(int argc, char *argv[])
     {
         for (const auto &word : words)
         {
-            std::size_t position = 0;
+            std::size_t position{0};
 
             while ((position = lineView.find(word, position)) != std::string_view::npos)
             {
