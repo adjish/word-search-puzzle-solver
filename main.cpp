@@ -33,15 +33,15 @@ int main(int argc, char *argv[])
 
     std::ios_base::sync_with_stdio(false);
 
-    const auto print_usage = [argv]()
+    const auto print_usage = [argv](std::ostream &os)
     {
-        std::cout << "Usage:\t" << argv[0]
-                  << " [crossword-file word-list-file]\n"
-                     "\t-i, --ignore-case\tcase insensitive search\n"
-                     "\t--crossword-file FILE\tpath of crossword file\n"
-                     "\t--words-file FILE\tpath of words file\n"
-                     "\t--highlight-color CODE\tANSI code of highlight color (30-37 or 90-97)\n"
-                     "\t-h, -?, --help\t\tshow help\n";
+        os << "Usage:\t" << argv[0]
+           << " [crossword-file word-list-file]\n"
+              "\t-i, --ignore-case\tcase insensitive search\n"
+              "\t--crossword-file FILE\tpath of crossword file\n"
+              "\t--words-file FILE\tpath of words file\n"
+              "\t--highlight-color CODE\tANSI code of highlight color (30-37 or 90-97)\n"
+              "\t-h, -?, --help\t\tshow help\n";
     };
 
     bool ignoreCase{false};
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
         }
         else if (option == "--help" || option == "-h" || option == "-?")
         {
-            print_usage();
+            print_usage(std::cout);
             return EXIT_SUCCESS;
         }
         else if (!option.empty() && option.front() != '-')
@@ -129,14 +129,14 @@ int main(int argc, char *argv[])
             else
             {
                 std::cerr << "Too many positional arguments specified!\n\n";
-                print_usage();
+                print_usage(std::cerr);
                 return EXIT_FAILURE;
             }
         }
         else
         {
             std::cerr << "Invalid argument or option!\n\n";
-            print_usage();
+            print_usage(std::cerr);
             return EXIT_FAILURE;
         }
     }
