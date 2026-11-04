@@ -167,7 +167,7 @@ int main(int argc, char *argv[])
         }
     };
 
-    std::size_t width{1};
+    std::size_t width{0};
     std::string line;
     std::vector<std::string> inputCrossword;
     std::unordered_set<std::string> wordsInput;
@@ -197,7 +197,7 @@ int main(int argc, char *argv[])
             width = std::max(width, line.length());
         }
 
-        if (inputCrossword.empty())
+        if (inputCrossword.empty() || width == 0)
         {
             std::cerr << "Crossword empty.\n";
             return EXIT_FAILURE;
