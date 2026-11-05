@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
     {
         auto &ret = std::getline(is, str);
 
-        if (!str.empty() && str.back() == '\r')
+        while (!str.empty() && str.back() == '\r')
         {
             str.pop_back();
         }
