@@ -5,7 +5,9 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <locale>
+#include <new>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -14,6 +16,7 @@
 #include <vector>
 
 int main(int argc, char *argv[])
+try
 {
     constexpr int DEFAULT_HIGHLIGHT_COLOR_CODE = 31;
 
@@ -285,6 +288,12 @@ int main(int argc, char *argv[])
 
     const std::size_t height = inputCrossword.size();
 
+    if (height != 0 && width > std::numeric_limits<std::size_t>::max() / height)
+    {
+        std::cerr << "Grid dimensions too large.\n";
+        return EXIT_FAILURE;
+    }
+
     const std::vector<std::size_t> rowLength = [&]()
     {
         std::vector<std::size_t> lengths(height);
@@ -297,7 +306,18 @@ int main(int argc, char *argv[])
         return lengths;
     }();
 
-    std::vector<std::vector<std::uint8_t>> highlights(height, std::vector<std::uint8_t>(width, 0));
+    std::vector<std::vector<std::uint8_t>> highlights;
+
+    try
+    {
+        highlights.assign(height, std::vector<std::uint8_t>(width, 0));
+    }
+    catch (const std::bad_alloc &)
+    {
+        std::cerr << "Not enough memory for a " << height << "x" << width << " grid.\n";
+        return EXIT_FAILURE;
+    }
+
     const std::vector<std::string> words(wordsInput.begin(), wordsInput.end());
 
     line.reserve(height);
@@ -452,4 +472,11 @@ int main(int argc, char *argv[])
     {
         std::cout << "\x1b[0m";
     }
+
+    return EXIT_SUCCESS;
+}
+catch (const std::bad_alloc &)
+{
+    std::cerr << "Not enough memory.\n";
+    return EXIT_FAILURE;
 }
