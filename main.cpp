@@ -1,11 +1,11 @@
 #include <algorithm>
+#include <cctype>
 #include <charconv>
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
-#include <limits>
 #include <locale>
 #include <new>
 #include <stdexcept>
@@ -288,12 +288,6 @@ try
 
     const std::size_t height = inputCrossword.size();
 
-    if (height != 0 && width > std::numeric_limits<std::size_t>::max() / height)
-    {
-        std::cerr << "Grid dimensions too large.\n";
-        return EXIT_FAILURE;
-    }
-
     const std::vector<std::size_t> rowLength = [&]()
     {
         std::vector<std::size_t> lengths(height);
@@ -457,7 +451,19 @@ try
                 isHighlighted = false;
             }
 
-            std::cout << ' ' << inputCrossword[i][j];
+            std::cout.put(' ');
+
+            unsigned char const uc = static_cast<unsigned char>(inputCrossword[i][j]);
+
+            if (std::iscntrl(uc))
+            {
+                std::cout.put('^');
+                std::cout.put(uc < 0x20 ? static_cast<char>('@' + uc) : '?');
+            }
+            else
+            {
+                std::cout.put(static_cast<char>(uc));
+            }
         }
 
         std::cout.put('\n');
