@@ -20,6 +20,17 @@ try
 {
     constexpr int DEFAULT_HIGHLIGHT_COLOR_CODE = 31;
 
+    const auto safe_exit = [](int status)
+    {
+        if (!std::cout.flush())
+        {
+            std::cerr << "Error writing output.\n";
+            return EXIT_FAILURE;
+        }
+
+        return status;
+    };
+
     const std::locale loc = []()
     {
         try
@@ -117,7 +128,7 @@ try
         else if (option == "--help" || option == "-h" || option == "-?")
         {
             print_usage(std::cout);
-            return EXIT_SUCCESS;
+            return safe_exit(EXIT_SUCCESS);
         }
         else if (!option.empty() && option.front() != '-')
         {
@@ -479,7 +490,7 @@ try
         std::cout << "\x1b[0m";
     }
 
-    return EXIT_SUCCESS;
+    return safe_exit(EXIT_SUCCESS);
 }
 catch (const std::bad_alloc &)
 {
