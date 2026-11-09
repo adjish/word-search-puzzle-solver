@@ -20,7 +20,7 @@ try
 {
     constexpr int DEFAULT_HIGHLIGHT_COLOR_CODE = 31;
 
-    const auto safe_exit = [](int status)
+    const auto safe_exit = []()
     {
         if (!std::cout.flush())
         {
@@ -28,7 +28,7 @@ try
             return EXIT_FAILURE;
         }
 
-        return status;
+        return EXIT_SUCCESS;
     };
 
     const std::locale loc = []()
@@ -75,7 +75,7 @@ try
         }
         else if (option == "--crossword-file")
         {
-            if (++i < args_number)
+            if (++i < args_number && argv[i][0] != '\0')
             {
                 crosswordPath = argv[i];
             }
@@ -87,7 +87,7 @@ try
         }
         else if (option == "--words-file")
         {
-            if (++i < args_number)
+            if (++i < args_number && argv[i][0] != '\0')
             {
                 wordsPath = argv[i];
             }
@@ -128,7 +128,7 @@ try
         else if (option == "--help" || option == "-h" || option == "-?")
         {
             print_usage(std::cout);
-            return safe_exit(EXIT_SUCCESS);
+            return safe_exit();
         }
         else if (!option.empty() && option.front() != '-')
         {
@@ -490,7 +490,7 @@ try
         std::cout << "\x1b[0m";
     }
 
-    return safe_exit(EXIT_SUCCESS);
+    return safe_exit();
 }
 catch (const std::bad_alloc &)
 {
