@@ -211,6 +211,12 @@ try
             width = std::max(width, line.length());
         }
 
+        if (crosswordFile.bad() || !crosswordFile.eof())
+        {
+            std::cerr << "Error reading \"" << crosswordPath << "\".\n";
+            return EXIT_FAILURE;
+        }
+
         if (inputCrossword.empty() || width == 0)
         {
             std::cerr << "Crossword empty.\n";
@@ -231,6 +237,12 @@ try
 
             wordsInput.insert(line);
             wordsInput.insert(std::string(line.rbegin(), line.rend()));
+        }
+
+        if (wordsFile.bad() || !wordsFile.eof())
+        {
+            std::cerr << "Error reading \"" << wordsPath << "\".\n";
+            return EXIT_FAILURE;
         }
 
         if (wordsInput.empty())
