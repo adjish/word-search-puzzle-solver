@@ -173,6 +173,14 @@ try
         return ret;
     };
 
+    const auto strip_utf8_bom = [](std::string &str)
+    {
+        if (str.compare(0, 3, "\xEF\xBB\xBF") == 0)
+        {
+            str.erase(0, 3);
+        }
+    };
+
     const auto to_lower = [&ct](std::string &str)
     {
         for (char &c : str)
@@ -204,8 +212,16 @@ try
             return EXIT_FAILURE;
         }
 
+        bool firstCrosswordLine{true};
+
         while (read_line(crosswordFile, line))
         {
+            if (firstCrosswordLine)
+            {
+                strip_utf8_bom(line);
+                firstCrosswordLine = false;
+            }
+
             inputCrossword.push_back(line);
 
             width = std::max(width, line.length());
@@ -223,8 +239,16 @@ try
             return EXIT_FAILURE;
         }
 
+        bool firstWordLine{true};
+
         while (read_line(wordsFile, line))
         {
+            if (firstWordLine)
+            {
+                strip_utf8_bom(line);
+                firstWordLine = false;
+            }
+
             if (line.empty())
             {
                 continue;
