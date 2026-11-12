@@ -279,8 +279,16 @@ try
     {
         std::cout << "\n Enter your crossword:\n\n ";
 
+        bool firstStdinCrosswordLine{true};
+
         while (read_line(std::cin, line))
         {
+            if (firstStdinCrosswordLine)
+            {
+                strip_utf8_bom(line);
+                firstStdinCrosswordLine = false;
+            }
+
             if (line.empty())
             {
                 break;
@@ -307,8 +315,16 @@ try
 
         std::cout << " Enter the words to search in the crossword:\n\n ";
 
+        bool firstStdinWordLine{true};
+
         while (read_line(std::cin, line))
         {
+            if (firstStdinWordLine)
+            {
+                strip_utf8_bom(line);
+                firstStdinWordLine = false;
+            }
+
             if (line.empty())
             {
                 break;
