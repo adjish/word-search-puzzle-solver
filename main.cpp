@@ -49,7 +49,27 @@ try
 
     const auto print_usage = [argv](std::ostream &os)
     {
-        os << "Usage:\t" << argv[0]
+        std::string prog = argv[0];
+        std::string rendered;
+
+        rendered.reserve(prog.size());
+
+        for (char c : prog)
+        {
+            unsigned char const uc = static_cast<unsigned char>(c);
+
+            if (std::iscntrl(uc))
+            {
+                rendered += '^';
+                rendered += (uc < 0x20) ? static_cast<char>('@' + uc) : '?';
+            }
+            else
+            {
+                rendered += c;
+            }
+        }
+
+        os << "Usage:\t" << rendered
            << " [crossword-file word-list-file]\n"
               "\t-i, --ignore-case\tcase insensitive search\n"
               "\t--crossword-file FILE\tpath of crossword file\n"
