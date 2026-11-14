@@ -242,6 +242,12 @@ try
                 firstCrosswordLine = false;
             }
 
+            if (line.find('\0') != std::string::npos)
+            {
+                std::cerr << "Crossword contains NUL.\n";
+                return EXIT_FAILURE;
+            }
+
             inputCrossword.push_back(line);
 
             width = std::max(width, line.length());
@@ -267,6 +273,12 @@ try
             {
                 strip_utf8_bom(line);
                 firstWordLine = false;
+            }
+
+            if (line.find('\0') != std::string::npos)
+            {
+                std::cerr << "Word contains NUL.\n";
+                return EXIT_FAILURE;
             }
 
             if (line.empty())
@@ -309,6 +321,12 @@ try
                 firstStdinCrosswordLine = false;
             }
 
+            if (line.find('\0') != std::string::npos)
+            {
+                std::cerr << "Crossword contains NUL.\n";
+                return EXIT_FAILURE;
+            }
+
             if (line.empty())
             {
                 break;
@@ -343,6 +361,12 @@ try
             {
                 strip_utf8_bom(line);
                 firstStdinWordLine = false;
+            }
+
+            if (line.find('\0') != std::string::npos)
+            {
+                std::cerr << "Word contains NUL.\n";
+                return EXIT_FAILURE;
             }
 
             if (line.empty())
