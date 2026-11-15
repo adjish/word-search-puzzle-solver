@@ -323,7 +323,7 @@ try
 
             if (line.find('\0') != std::string::npos)
             {
-                std::cerr << "Crossword contains NUL.\n";
+                std::cerr << "Crossword contains NUL.\n\n";
                 return EXIT_FAILURE;
             }
 
@@ -365,7 +365,7 @@ try
 
             if (line.find('\0') != std::string::npos)
             {
-                std::cerr << "Word contains NUL.\n";
+                std::cerr << "Word contains NUL.\n\n";
                 return EXIT_FAILURE;
             }
 
