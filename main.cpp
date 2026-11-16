@@ -339,6 +339,12 @@ try
             std::cout.put(' ');
         }
 
+        if (std::cin.bad() || (std::cin.fail() && !std::cin.eof()))
+        {
+            std::cerr << "Error reading standard input.\n\n";
+            return EXIT_FAILURE;
+        }
+
         if (inputCrossword.empty())
         {
             std::cerr << (std::cin.eof() ? "End of input reached: exit.\n\n" : "Crossword empty.\n\n");
@@ -383,6 +389,12 @@ try
             wordsInput.insert(std::string(line.rbegin(), line.rend()));
 
             std::cout.put(' ');
+        }
+
+        if (std::cin.bad() || (std::cin.fail() && !std::cin.eof()))
+        {
+            std::cerr << "Error reading standard input.\n\n";
+            return EXIT_FAILURE;
         }
 
         if (wordsInput.empty())
