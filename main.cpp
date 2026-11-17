@@ -20,7 +20,7 @@ try
 {
     constexpr int DEFAULT_HIGHLIGHT_COLOR_CODE = 31;
 
-    const auto safe_exit = []()
+    const auto finish = []()
     {
         if (!std::cout.flush())
         {
@@ -148,7 +148,7 @@ try
         else if (option == "--help" || option == "-h" || option == "-?")
         {
             print_usage(std::cout);
-            return safe_exit();
+            return finish();
         }
         else if (!option.empty() && option.front() != '-')
         {
@@ -195,7 +195,10 @@ try
 
     const auto strip_utf8_bom = [](std::string &str)
     {
-        if (str.compare(0, 3, "\xEF\xBB\xBF") == 0)
+        if (str.compare(0, 3,
+                        "\xEF"
+                        "\xBB"
+                        "\xBF") == 0)
         {
             str.erase(0, 3);
         }
@@ -210,7 +213,7 @@ try
     };
 
     std::size_t width{0};
-    std::string line;
+    std::string scratch;
     std::vector<std::string> inputCrossword;
     std::unordered_set<std::string> wordsInput;
     bool const inputFromFiles = !crosswordPath.empty();
@@ -234,23 +237,23 @@ try
 
         bool firstCrosswordLine{true};
 
-        while (read_line(crosswordFile, line))
+        while (read_line(crosswordFile, scratch))
         {
             if (firstCrosswordLine)
             {
-                strip_utf8_bom(line);
+                strip_utf8_bom(scratch);
                 firstCrosswordLine = false;
             }
 
-            if (line.find('\0') != std::string::npos)
+            if (scratch.find('\0') != std::string::npos)
             {
                 std::cerr << "Crossword contains NUL.\n";
                 return EXIT_FAILURE;
             }
 
-            inputCrossword.push_back(line);
+            inputCrossword.push_back(scratch);
 
-            width = std::max(width, line.length());
+            width = std::max(width, scratch.length());
         }
 
         if (crosswordFile.bad() || !crosswordFile.eof())
@@ -267,32 +270,32 @@ try
 
         bool firstWordLine{true};
 
-        while (read_line(wordsFile, line))
+        while (read_line(wordsFile, scratch))
         {
             if (firstWordLine)
             {
-                strip_utf8_bom(line);
+                strip_utf8_bom(scratch);
                 firstWordLine = false;
             }
 
-            if (line.find('\0') != std::string::npos)
+            if (scratch.find('\0') != std::string::npos)
             {
                 std::cerr << "Word contains NUL.\n";
                 return EXIT_FAILURE;
             }
 
-            if (line.empty())
+            if (scratch.empty())
             {
                 continue;
             }
 
             if (ignoreCase)
             {
-                to_lower(line);
+                to_lower(scratch);
             }
 
-            wordsInput.insert(line);
-            wordsInput.insert(std::string(line.rbegin(), line.rend()));
+            wordsInput.insert(scratch);
+            wordsInput.insert(std::string(scratch.rbegin(), scratch.rend()));
         }
 
         if (wordsFile.bad() || !wordsFile.eof())
@@ -313,28 +316,28 @@ try
 
         bool firstStdinCrosswordLine{true};
 
-        while (read_line(std::cin, line))
+        while (read_line(std::cin, scratch))
         {
             if (firstStdinCrosswordLine)
             {
-                strip_utf8_bom(line);
+                strip_utf8_bom(scratch);
                 firstStdinCrosswordLine = false;
             }
 
-            if (line.find('\0') != std::string::npos)
+            if (scratch.find('\0') != std::string::npos)
             {
                 std::cerr << "Crossword contains NUL.\n\n";
                 return EXIT_FAILURE;
             }
 
-            if (line.empty())
+            if (scratch.empty())
             {
                 break;
             }
 
-            width = std::max(width, line.length());
+            width = std::max(width, scratch.length());
 
-            inputCrossword.push_back(line);
+            inputCrossword.push_back(scratch);
 
             std::cout.put(' ');
         }
@@ -361,32 +364,32 @@ try
 
         bool firstStdinWordLine{true};
 
-        while (read_line(std::cin, line))
+        while (read_line(std::cin, scratch))
         {
             if (firstStdinWordLine)
             {
-                strip_utf8_bom(line);
+                strip_utf8_bom(scratch);
                 firstStdinWordLine = false;
             }
 
-            if (line.find('\0') != std::string::npos)
+            if (scratch.find('\0') != std::string::npos)
             {
                 std::cerr << "Word contains NUL.\n\n";
                 return EXIT_FAILURE;
             }
 
-            if (line.empty())
+            if (scratch.empty())
             {
                 break;
             }
 
             if (ignoreCase)
             {
-                to_lower(line);
+                to_lower(scratch);
             }
 
-            wordsInput.insert(line);
-            wordsInput.insert(std::string(line.rbegin(), line.rend()));
+            wordsInput.insert(scratch);
+            wordsInput.insert(std::string(scratch.rbegin(), scratch.rend()));
 
             std::cout.put(' ');
         }
@@ -433,7 +436,7 @@ try
 
     const std::vector<std::string> words(wordsInput.begin(), wordsInput.end());
 
-    line.reserve(height);
+    scratch.reserve(height);
 
     std::vector<std::string> crosswordLowered;
 
@@ -483,70 +486,70 @@ try
 
     for (std::size_t i{0}; i < width; ++i)
     {
-        line.clear();
+        scratch.clear();
 
         for (std::size_t j{0}; j < height; ++j)
         {
-            line.push_back(constCrossword[j][i]);
+            scratch.push_back(constCrossword[j][i]);
         }
 
-        std::string_view const lineView{line};
+        std::string_view const lineView{scratch};
 
         search_and_highlight(lineView, [&](const std::size_t idx) { highlights[idx][i] = 1; });
     }
 
     for (std::size_t i{0}; i < width; ++i)
     {
-        line.clear();
+        scratch.clear();
 
         for (std::size_t j = i, k{0}; j < width && k < height; ++j, ++k)
         {
-            line.push_back(constCrossword[k][j]);
+            scratch.push_back(constCrossword[k][j]);
         }
 
-        std::string_view const lineView{line};
+        std::string_view const lineView{scratch};
 
         search_and_highlight(lineView, [&](const std::size_t idx) { highlights[idx][idx + i] = 1; });
     }
 
     for (std::size_t i{1}; i < height; ++i)
     {
-        line.clear();
+        scratch.clear();
 
         for (std::size_t k = i, j{0}; j < width && k < height; ++j, ++k)
         {
-            line.push_back(constCrossword[k][j]);
+            scratch.push_back(constCrossword[k][j]);
         }
 
-        std::string_view const lineView{line};
+        std::string_view const lineView{scratch};
 
         search_and_highlight(lineView, [&](const std::size_t idx) { highlights[i + idx][idx] = 1; });
     }
 
     for (std::size_t i{1}; i <= height; ++i)
     {
-        line.clear();
+        scratch.clear();
 
         for (std::size_t j = i, k{0}; j && (k < width); ++k)
         {
-            line.push_back(constCrossword[--j][k]);
+            scratch.push_back(constCrossword[--j][k]);
         }
 
-        std::string_view const lineView{line};
+        std::string_view const lineView{scratch};
 
         search_and_highlight(lineView, [&](const std::size_t idx) { highlights[i - idx - 1][idx] = 1; });
     }
 
     for (std::size_t i{1}; i < width; ++i)
     {
-        line.clear();
+        scratch.clear();
 
         for (std::size_t j = i, k{height}; k && (j < width); ++j)
         {
-            line.push_back(constCrossword[--k][j]);
+            scratch.push_back(constCrossword[--k][j]);
         }
 
-        std::string_view const lineView{line};
+        std::string_view const lineView{scratch};
 
         search_and_highlight(lineView, [&](const std::size_t idx) { highlights[height - idx - 1][idx + i] = 1; });
     }
@@ -598,7 +601,7 @@ try
         std::cout << "\x1b[0m";
     }
 
-    return safe_exit();
+    return finish();
 }
 catch (const std::bad_alloc &)
 {
