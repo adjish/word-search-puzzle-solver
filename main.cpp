@@ -49,7 +49,7 @@ try
 
     const auto print_usage = [argv](std::ostream &os)
     {
-        std::string prog = argv[0];
+        std::string_view const prog{argv[0]};
         std::string rendered;
 
         rendered.reserve(prog.size());
@@ -410,7 +410,7 @@ try
 
     const std::size_t height = inputCrossword.size();
 
-    const std::vector<std::size_t> rowLength = [&]()
+    const std::vector<std::size_t> row_lengths = [&]()
     {
         std::vector<std::size_t> lengths(height);
 
@@ -560,7 +560,7 @@ try
 
     for (std::size_t i{0}; i < height; ++i)
     {
-        for (std::size_t j{0}; j < rowLength[i]; ++j)
+        for (std::size_t j{0}; j < row_lengths[i]; ++j)
         {
             if (highlights[i][j] && !isHighlighted)
             {
