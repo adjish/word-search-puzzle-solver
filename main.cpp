@@ -8,6 +8,7 @@
 #include <iostream>
 #include <locale>
 #include <new>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -47,35 +48,37 @@ try
 
     std::ios_base::sync_with_stdio(false);
 
-    const auto print_usage = [argv](std::ostream &os)
+    const auto write_sanitized = [](std::ostream &os, unsigned char const uc)
     {
-        std::string_view const prog{argv[0]};
-        std::string rendered;
-
-        rendered.reserve(prog.size());
-
-        for (char c : prog)
+        if (std::iscntrl(uc))
         {
-            unsigned char const uc = static_cast<unsigned char>(c);
+            os.put('^');
+            os.put(uc < 0x20 ? static_cast<char>('@' + uc) : '?');
+        }
+        else
+        {
+            os.put(static_cast<char>(uc));
+        }
+    };
 
-            if (std::iscntrl(uc))
-            {
-                rendered += '^';
-                rendered += (uc < 0x20) ? static_cast<char>('@' + uc) : '?';
-            }
-            else
-            {
-                rendered += c;
-            }
+    const auto print_usage = [argv, &write_sanitized](std::ostream &os)
+    {
+        std::ostringstream buf;
+        buf << "Usage:\t";
+
+        for (char const c : std::string_view{argv[0]})
+        {
+            write_sanitized(buf, static_cast<unsigned char>(c));
         }
 
-        os << "Usage:\t" << rendered
-           << " [crossword-file word-list-file]\n"
-              "\t-i, --ignore-case\tcase insensitive search\n"
-              "\t--crossword-file FILE\tpath of crossword file\n"
-              "\t--words-file FILE\tpath of words file\n"
-              "\t--highlight-color CODE\tANSI code of highlight color (30-37 or 90-97)\n"
-              "\t-h, -?, --help\t\tshow help\n";
+        buf << " [crossword-file word-list-file]\n"
+               "\t-i, --ignore-case\tcase insensitive search\n"
+               "\t--crossword-file FILE\tpath of crossword file\n"
+               "\t--words-file FILE\tpath of words file\n"
+               "\t--highlight-color CODE\tANSI code of highlight color (30-37 or 90-97)\n"
+               "\t-h, -?, --help\t\tshow help\n";
+
+        os << buf.str();
     };
 
     bool ignoreCase{false};
@@ -574,18 +577,7 @@ try
             }
 
             std::cout.put(' ');
-
-            unsigned char const uc = static_cast<unsigned char>(inputCrossword[i][j]);
-
-            if (std::iscntrl(uc))
-            {
-                std::cout.put('^');
-                std::cout.put(uc < 0x20 ? static_cast<char>('@' + uc) : '?');
-            }
-            else
-            {
-                std::cout.put(static_cast<char>(uc));
-            }
+            write_sanitized(std::cout, static_cast<unsigned char>(inputCrossword[i][j]));
         }
 
         std::cout.put('\n');
