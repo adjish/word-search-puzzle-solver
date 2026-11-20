@@ -7,7 +7,9 @@
 #include <fstream>
 #include <iostream>
 #include <locale>
+#include <mdspan>
 #include <new>
+#include <ranges>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -198,10 +200,7 @@ try
 
     const auto strip_utf8_bom = [](std::string &str)
     {
-        if (str.compare(0, 3,
-                        "\xEF"
-                        "\xBB"
-                        "\xBF") == 0)
+        if (str.starts_with("\xEF\xBB\xBF"))
         {
             str.erase(0, 3);
         }
@@ -248,7 +247,7 @@ try
                 firstCrosswordLine = false;
             }
 
-            if (scratch.find('\0') != std::string::npos)
+            if (scratch.contains('\0'))
             {
                 std::cerr << "Crossword contains NUL.\n";
                 return EXIT_FAILURE;
@@ -281,7 +280,7 @@ try
                 firstWordLine = false;
             }
 
-            if (scratch.find('\0') != std::string::npos)
+            if (scratch.contains('\0'))
             {
                 std::cerr << "Word contains NUL.\n";
                 return EXIT_FAILURE;
@@ -327,7 +326,7 @@ try
                 firstStdinCrosswordLine = false;
             }
 
-            if (scratch.find('\0') != std::string::npos)
+            if (scratch.contains('\0'))
             {
                 std::cerr << "Crossword contains NUL.\n\n";
                 return EXIT_FAILURE;
@@ -375,7 +374,7 @@ try
                 firstStdinWordLine = false;
             }
 
-            if (scratch.find('\0') != std::string::npos)
+            if (scratch.contains('\0'))
             {
                 std::cerr << "Word contains NUL.\n\n";
                 return EXIT_FAILURE;
@@ -413,29 +412,28 @@ try
 
     const std::size_t height = inputCrossword.size();
 
-    const std::vector<std::size_t> row_lengths = [&]()
+    std::vector<std::uint8_t> highlights_storage;
+
+    if (height != 0 && width > highlights_storage.max_size() / height)
     {
-        std::vector<std::size_t> lengths(height);
+        std::cerr << "Grid dimensions too large.\n";
+        return EXIT_FAILURE;
+    }
 
-        for (std::size_t i{0}; i < height; ++i)
-        {
-            lengths[i] = inputCrossword[i].size();
-        }
-
-        return lengths;
-    }();
-
-    std::vector<std::vector<std::uint8_t>> highlights;
+    const auto row_lengths = inputCrossword | std::views::transform([](const std::string &row) { return row.size(); }) |
+                             std::ranges::to<std::vector<std::size_t>>();
 
     try
     {
-        highlights.assign(height, std::vector<std::uint8_t>(width, 0));
+        highlights_storage.assign(height * width, 0);
     }
     catch (const std::bad_alloc &)
     {
         std::cerr << "Not enough memory for a " << height << "x" << width << " grid.\n";
         return EXIT_FAILURE;
     }
+
+    std::mdspan highlights{highlights_storage.data(), height, width};
 
     const std::vector<std::string> words(wordsInput.begin(), wordsInput.end());
 
@@ -484,7 +482,7 @@ try
     {
         std::string_view const lineView{constCrossword[i]};
 
-        search_and_highlight(lineView, [&](const std::size_t idx) { highlights[i][idx] = 1; });
+        search_and_highlight(lineView, [&](const std::size_t idx) { highlights[i, idx] = 1; });
     }
 
     for (std::size_t i{0}; i < width; ++i)
@@ -498,7 +496,7 @@ try
 
         std::string_view const lineView{scratch};
 
-        search_and_highlight(lineView, [&](const std::size_t idx) { highlights[idx][i] = 1; });
+        search_and_highlight(lineView, [&](const std::size_t idx) { highlights[idx, i] = 1; });
     }
 
     for (std::size_t i{0}; i < width; ++i)
@@ -512,7 +510,7 @@ try
 
         std::string_view const lineView{scratch};
 
-        search_and_highlight(lineView, [&](const std::size_t idx) { highlights[idx][idx + i] = 1; });
+        search_and_highlight(lineView, [&](const std::size_t idx) { highlights[idx, idx + i] = 1; });
     }
 
     for (std::size_t i{1}; i < height; ++i)
@@ -526,7 +524,7 @@ try
 
         std::string_view const lineView{scratch};
 
-        search_and_highlight(lineView, [&](const std::size_t idx) { highlights[i + idx][idx] = 1; });
+        search_and_highlight(lineView, [&](const std::size_t idx) { highlights[i + idx, idx] = 1; });
     }
 
     for (std::size_t i{1}; i <= height; ++i)
@@ -540,7 +538,7 @@ try
 
         std::string_view const lineView{scratch};
 
-        search_and_highlight(lineView, [&](const std::size_t idx) { highlights[i - idx - 1][idx] = 1; });
+        search_and_highlight(lineView, [&](const std::size_t idx) { highlights[i - idx - 1, idx] = 1; });
     }
 
     for (std::size_t i{1}; i < width; ++i)
@@ -554,7 +552,7 @@ try
 
         std::string_view const lineView{scratch};
 
-        search_and_highlight(lineView, [&](const std::size_t idx) { highlights[height - idx - 1][idx + i] = 1; });
+        search_and_highlight(lineView, [&](const std::size_t idx) { highlights[height - idx - 1, idx + i] = 1; });
     }
 
     std::cout << "\x1b[0m";
@@ -565,12 +563,12 @@ try
     {
         for (std::size_t j{0}; j < row_lengths[i]; ++j)
         {
-            if (highlights[i][j] && !isHighlighted)
+            if (highlights[i, j] && !isHighlighted)
             {
                 std::cout << "\x1b[1;" << highlightColorCode << "m";
                 isHighlighted = true;
             }
-            else if (!highlights[i][j] && isHighlighted)
+            else if (!highlights[i, j] && isHighlighted)
             {
                 std::cout << "\x1b[0m";
                 isHighlighted = false;
