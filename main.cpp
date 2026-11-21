@@ -414,7 +414,7 @@ try
 
     std::vector<std::uint8_t> highlights_storage;
 
-    if (height != 0 && width > highlights_storage.max_size() / height)
+    if (width > highlights_storage.max_size() / height)
     {
         std::cerr << "Grid dimensions too large.\n";
         return EXIT_FAILURE;
