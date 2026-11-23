@@ -80,7 +80,7 @@ try
                "\t--highlight-color CODE\tANSI code of highlight color (30-37 or 90-97)\n"
                "\t-h, -?, --help\t\tshow help\n";
 
-        os << buf.str();
+        os << buf.view();
     };
 
     bool ignoreCase{false};
@@ -88,9 +88,9 @@ try
 
     std::string crosswordPath, wordsPath;
 
-    const std::size_t args_number{static_cast<std::size_t>(argc)};
+    const std::size_t argsNumber{static_cast<std::size_t>(argc)};
 
-    for (std::size_t i = 1; i < args_number; ++i)
+    for (std::size_t i = 1; i < argsNumber; ++i)
     {
         std::string_view const option{argv[i]};
 
@@ -100,7 +100,7 @@ try
         }
         else if (option == "--crossword-file")
         {
-            if (++i < args_number && argv[i][0] != '\0')
+            if (++i < argsNumber && argv[i][0] != '\0')
             {
                 crosswordPath = argv[i];
             }
@@ -112,7 +112,7 @@ try
         }
         else if (option == "--words-file")
         {
-            if (++i < args_number && argv[i][0] != '\0')
+            if (++i < argsNumber && argv[i][0] != '\0')
             {
                 wordsPath = argv[i];
             }
@@ -124,7 +124,7 @@ try
         }
         else if (option == "--highlight-color")
         {
-            if (++i < args_number)
+            if (++i < argsNumber)
             {
                 std::string_view const value{argv[i]};
                 auto const [end, ec] = std::from_chars(value.data(), value.data() + value.size(), highlightColorCode);
@@ -412,20 +412,20 @@ try
 
     const std::size_t height = inputCrossword.size();
 
-    std::vector<std::uint8_t> highlights_storage;
+    std::vector<std::uint8_t> highlightsStorage;
 
-    if (width > highlights_storage.max_size() / height)
+    if (width > highlightsStorage.max_size() / height)
     {
         std::cerr << "Grid dimensions too large.\n";
         return EXIT_FAILURE;
     }
 
-    const auto row_lengths = inputCrossword | std::views::transform([](const std::string &row) { return row.size(); }) |
-                             std::ranges::to<std::vector<std::size_t>>();
+    const auto rowLengths = inputCrossword | std::views::transform([](const std::string &row) { return row.size(); }) |
+                            std::ranges::to<std::vector<std::size_t>>();
 
     try
     {
-        highlights_storage.assign(height * width, 0);
+        highlightsStorage.assign(height * width, 0);
     }
     catch (const std::bad_alloc &)
     {
@@ -433,7 +433,7 @@ try
         return EXIT_FAILURE;
     }
 
-    std::mdspan highlights{highlights_storage.data(), height, width};
+    std::mdspan highlights{highlightsStorage.data(), height, width};
 
     const std::vector<std::string> words(wordsInput.begin(), wordsInput.end());
 
@@ -561,7 +561,7 @@ try
 
     for (std::size_t i{0}; i < height; ++i)
     {
-        for (std::size_t j{0}; j < row_lengths[i]; ++j)
+        for (std::size_t j{0}; j < rowLengths[i]; ++j)
         {
             if (highlights[i, j] && !isHighlighted)
             {
